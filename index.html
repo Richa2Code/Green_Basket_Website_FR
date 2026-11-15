@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Green Basket | Smart Product Expiry Tracker & Inventory Management</title>
+  <meta name="description"
+    content="Professional desktop web application for grocery inventory management, automated expiry tracking, FIFO optimization, and food waste prevention.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+</head>
+
+<body>
+
+  <div class="app-layout">
+
+    <!-- ====================================================================
+         LEFT SIDEBAR NAVIGATION (Desktop SaaS Layout)
+         ==================================================================== -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">
+          <h2>Green Basket</h2>
+          <p>Smart Expiry Tracker</p>
+        </div>
+      </div>
+
+      <div class="sidebar-nav-container">
+        <!-- Group 1: Overview -->
+        <div class="sidebar-nav-group">
+          <h4>Overview</h4>
+          <ul class="sidebar-nav-list">
+            <li>
+              <button type="button" class="sidebar-nav-btn active" data-view="viewDashboard">
+                <div class="sidebar-btn-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                  </svg>
+                  <span class="sidebar-btn-label">Dashboard</span>
+                </div>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sidebar-nav-btn" data-view="viewPantry">
+                <div class="sidebar-btn-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                  <span class="sidebar-btn-label">Pantry & Inventory</span>
+                </div>
+                <span class="sidebar-badge count" id="navBadgeTotalCount">18</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Group 2: Operations -->
+        <div class="sidebar-nav-group">
+          <h4>Operations</h4>
+          <ul class="sidebar-nav-list">
+            <li>
+              <button type="button" class="sidebar-nav-btn" data-view="viewIntake">
+                <div class="sidebar-btn-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="4" y1="4" x2="20" y2="4" />
+                    <line x1="4" y1="20" x2="20" y2="20" />
+                    <rect x="8" y="8" width="8" height="8" />
+                  </svg>
+                  <span class="sidebar-btn-label">Barcode & Intake</span>
+                </div>
+                <span class="sidebar-badge warning" style="font-size:10px;">SCAN</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sidebar-nav-btn" data-view="viewExpiry">
+                <div class="sidebar-btn-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  <span class="sidebar-btn-label">Expiry Health</span>
+                </div>
+                <span class="sidebar-badge danger" id="navBadgeExpiredCount">7</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sidebar-nav-btn" data-view="viewDonation">
+                <div class="sidebar-btn-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                  <span class="sidebar-btn-label">Donation Hub</span>
+                </div>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Group 3: Knowledge & Insights -->
+        <div class="sidebar-nav-group">
+          <h4>Knowledge & Insights</h4>
+          <ul class="sidebar-nav-list">
+            <li>
+              <button type="button" class="sidebar-nav-btn" data-view="viewStorage">
+                <div class="sidebar-btn-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                  <span class="sidebar-btn-label">Storage Guides</span>
+                </div>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sidebar-nav-btn" data-view="viewAnalytics">
+                <div class="sidebar-btn-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                  </svg>
+                  <span class="sidebar-btn-label">Reports & Analytics</span>
+                </div>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sidebar-nav-btn" data-view="viewSettings">
+                <div class="sidebar-btn-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                      d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                  <span class="sidebar-btn-label">Settings</span>
+                </div>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-store-card">
+          <div class="sidebar-store-avatar">GB</div>
+          <div class="sidebar-store-meta">
+            <h4>Green Basket Supermarket</h4>
+            <p>SHE Innovates &bull; CP2 Batch C</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         MAIN VIEWPORT & TOP DESKTOP NAVBAR
+         ==================================================================== -->
+    <div class="app-main-viewport">
+
+      <header class="desktop-top-header">
+        <div class="header-left-section">
+          <h1 class="page-title-heading" id="topPageTitle">Store Overview & Expiry Dashboard</h1>
+
+          <!-- Global Search Field -->
+          <div class="header-global-search">
+            <span class="search-field-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <input type="text" id="globalHeaderSearch" class="search-field-input"
+              placeholder="Quick search inventory, barcodes, suppliers...">
+          </div>
+        </div>
+
+        <div class="header-right-section">
+          <div class="header-status-badge">
+            <span class="pulse-dot-green"></span>
+            <span>Live Inventory Tracking</span>
+          </div>
+
+          <!-- Theme Switcher -->
+          <button type="button" class="icon-btn-utility" id="btnToggleTheme" title="Toggle Light/Dark Theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+            </svg>
+          </button>
+
+          <!-- Notification Bell -->
+          <button type="button" class="icon-btn-utility" id="btnHeaderNotifs" title="Expiry Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            <span class="notif-unread-dot" id="headerNotifBadge"></span>
+          </button>
+
+          <!-- Primary Header Action -->
+          <button type="button" class="btn-header-cta" id="btnQuickIntake">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>+ Add Product</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Scrollable Content Area -->
+      <main class="main-content-scroll">
+
+        <!-- ==============================================================
+             PAGE 1: DASHBOARD OVERVIEW
+             ============================================================== -->
+        <section class="page-view-section active" id="viewDashboard">
+
+          <!-- 5-Metric Executive KPI Tiles -->
+          <div class="dashboard-kpi-row">
+            <div class="kpi-tile-card" onclick="switchView('viewPantry')">
+              <div class="kpi-tile-header">
+                <span class="kpi-tile-label">Total Stock Items</span>
+                <div class="kpi-icon-pill green">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                </div>
+              </div>
+              <div class="kpi-tile-value" id="kpiDashTotalStock">1,248</div>
+              <div class="kpi-tile-sub"><span>✓ Active across all aisles</span></div>
+            </div>
+
+            <div class="kpi-tile-card" onclick="switchView('viewExpiry', 'expiring')">
+              <div class="kpi-tile-header">
+                <span class="kpi-tile-label">Expiring Soon (&lt; 4d)</span>
+                <div class="kpi-icon-pill amber">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </div>
+              </div>
+              <div class="kpi-tile-value" style="color:var(--status-expiring);" id="kpiDashExpiring">24</div>
+              <div class="kpi-tile-sub"><span style="color:#B45309;">⚠️ Clearance discount recommended</span></div>
+            </div>
+
+            <div class="kpi-tile-card" onclick="switchView('viewExpiry', 'expired')">
+              <div class="kpi-tile-header">
+                <span class="kpi-tile-label">Expired Products</span>
+                <div class="kpi-icon-pill red">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </div>
+              </div>
+              <div class="kpi-tile-value" style="color:var(--status-expired);" id="kpiDashExpired">7</div>
+              <div class="kpi-tile-sub"><span style="color:var(--status-expired);">Immediate removal / compost</span>
+              </div>
+            </div>
+
+            <div class="kpi-tile-card" onclick="switchView('viewAnalytics')">
+              <div class="kpi-tile-header">
+                <span class="kpi-tile-label">Loss Prevented</span>
+                <div class="kpi-icon-pill blue">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                </div>
+              </div>
+              <div class="kpi-tile-value" id="kpiDashSaved">₹6,450</div>
+              <div class="kpi-tile-sub"><span>Saved this month via clearance</span></div>
+            </div>
+
+            <div class="kpi-tile-card" onclick="switchView('viewDonation')">
+              <div class="kpi-tile-header">
+                <span class="kpi-tile-label">Surplus Donated</span>
+                <div class="kpi-icon-pill purple">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="kpi-tile-value" id="kpiDashDonated">18</div>
+              <div class="kpi-tile-sub"><span>Items redirected to food banks</span></div>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Split: Sales Sparkline Hero Card + Urgent Spoilage Action Center -->
+          <div class="dashboard-main-split">
+            <!-- Left: Hero Sales & Revenue Card -->
+            <div class="sales-card-gradient">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:14px; font-weight:600; opacity:0.9;">Store Revenue Performance</span>
+                <div class="timeframe-tabs-group">
+                  <button type="button" class="time-tab-btn active" data-period="today">Today</button>
+                  <button type="button" class="time-tab-btn" data-period="week">This Week</button>
+                  <button type="button" class="time-tab-btn" data-period="month">This Month</button>
+                </div>
+              </div>
+
+              <div class="sales-val-group">
+                <div>
+                  <span style="font-size:12px; opacity:0.8; display:block;">Total Revenue</span>
+                  <div class="sales-big-number" id="dashSalesAmount">₹48,250</div>
+                </div>
+                <div class="sales-tag-growth" id="dashSalesGrowth">+18.5% vs previous period</div>
+              </div>
+
+              <!-- Interactive Desktop Sparkline Chart -->
+              <svg class="sparkline-svg-desktop" viewBox="0 0 500 80" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="deskSparkGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3" />
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <path id="deskSparkArea" d="M0,60 Q80,65 140,40 T280,32 T400,16 L500,10 L500,80 L0,80 Z"
+                  fill="url(#deskSparkGrad)" />
+                <path id="deskSparkLine" d="M0,60 Q80,65 140,40 T280,32 T400,16 L500,10" fill="none" stroke="#FFFFFF"
+                  stroke-width="3.5" stroke-linecap="round" />
+              </svg>
+            </div>
+
+            <!-- Right: Urgent Spoilage Action Center -->
+            <div class="panel-card action-center-container">
+              <div class="panel-header-row" style="margin-bottom:8px;">
+                <div class="panel-title-block">
+                  <h3>Urgent Action Center</h3>
+                  <p>Near-expiry stock requiring attention</p>
+                </div>
+                <span class="status-badge-table expiring">High Priority</span>
+              </div>
+
+              <div class="urgent-alert-box">
+                <div class="urgent-alert-header">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path
+                      d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                  <span>3 Dairy items expire in &lt; 48 hours</span>
+                </div>
+                <p class="urgent-alert-desc">
+                  Amul Toned Milk and Fresh Paneer are reaching their expiration thresholds. Apply a 25% discount or
+                  schedule community donation before waste occurs.
+                </p>
+                <div style="display:flex; gap:8px;">
+                  <button type="button" class="btn-urgent-action" onclick="openDiscountModal('prod-2')">Apply 25%
+                    Clearance</button>
+                  <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;"
+                    onclick="openDonationModal('prod-2')">Donate</button>
+                </div>
+              </div>
+
+              <!-- Quick Smart Tools Hub -->
+              <div class="quick-tools-desktop-grid">
+                <div class="tool-tile" onclick="switchView('viewStorage')">
+                  <div class="tool-tile-icon" style="background:#ECFDF5; color:#10B981;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" />
+                      <path d="M12 6v6l4 2" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 style="font-size:13px; font-weight:700;">Storage Guides</h4>
+                    <p style="font-size:11px; color:var(--text-muted);">Prevent Spoilage</p>
+                  </div>
+                </div>
+
+                <div class="tool-tile" onclick="switchView('viewIntake')">
+                  <div class="tool-tile-icon" style="background:#FEF3C7; color:#D97706;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="4" y1="4" x2="20" y2="4" />
+                      <line x1="4" y1="20" x2="20" y2="20" />
+                      <rect x="8" y="8" width="8" height="8" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 style="font-size:13px; font-weight:700;">Barcode Intake</h4>
+                    <p style="font-size:11px; color:var(--text-muted);">Quick Scan</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Secondary Desktop Split: Low Stock Restock List + Category Health -->
+          <div class="dashboard-secondary-split">
+            <!-- Restock Checklist -->
+            <div class="panel-card">
+              <div class="panel-header-row">
+                <div class="panel-title-block">
+                  <h3>Shopping & Low Stock Checklist</h3>
+                  <p>Items reaching minimum safety stock</p>
+                </div>
+                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;"
+                  onclick="promptAddShoppingItem()">+ Add Item</button>
+              </div>
+
+              <div id="desktopShoppingListContainer">
+                <!-- Dynamically rendered checklist -->
+              </div>
+            </div>
+
+            <!-- Category Distribution Overview -->
+            <div class="panel-card">
+              <div class="panel-header-row">
+                <div class="panel-title-block">
+                  <h3>Inventory Category Breakdown</h3>
+                  <p>Stock allocation by department</p>
+                </div>
+                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;"
+                  onclick="switchView('viewAnalytics')">View Report</button>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:12px;" id="dashCategoryBars">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==============================================================
+             PAGE 2: PANTRY & INVENTORY (FULL DESKTOP DATA TABLE)
+             ============================================================== -->
+        <section class="page-view-section" id="viewPantry">
+          <div class="panel-card">
+
+            <!-- Table Toolbar (Search, Filters, Sort, View Toggle) -->
+            <div class="table-toolbar-row">
+              <div class="table-filter-group" id="desktopCategoryFilters">
+                <button type="button" class="filter-btn-pill active" data-category="all">All Products (18)</button>
+                <button type="button" class="filter-btn-pill" data-category="Dairy">Dairy</button>
+                <button type="button" class="filter-btn-pill" data-category="Bakery">Bakery</button>
+                <button type="button" class="filter-btn-pill" data-category="Beverages">Beverages</button>
+                <button type="button" class="filter-btn-pill" data-category="Pantry">Pantry Staples</button>
+                <button type="button" class="filter-btn-pill" data-category="Frozen">Frozen</button>
+                <button type="button" class="filter-btn-pill" data-category="Snacks">Snacks</button>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:10px;">
+                <label style="font-size:12.5px; font-weight:600; color:var(--text-muted);" for="desktopSortSelect">Sort
+                  By:</label>
+                <select id="desktopSortSelect" class="form-field-input"
+                  style="width:190px; padding:7px 12px; font-size:12.5px;">
+                  <option value="fifo">Expiry Date (FIFO Earliest)</option>
+                  <option value="name">Product Name (A-Z)</option>
+                  <option value="stock-low">Stock Units (Lowest First)</option>
+                  <option value="price-high">Price (High to Low)</option>
+                </select>
+                <button type="button" class="btn-primary-action" style="padding:8px 16px; font-size:13px;"
+                  onclick="switchView('viewIntake')">+ Add Item</button>
+              </div>
+            </div>
+
+            <!-- Desktop Data Table -->
+            <div class="desktop-table-container">
+              <table class="inventory-data-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Barcode</th>
+                    <th>Unit Price</th>
+                    <th>Current Stock</th>
+                    <th>Mfg Date</th>
+                    <th>Expiry Date</th>
+                    <th>Days Left</th>
+                    <th>Status</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="desktopInventoryTbody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             PAGE 3: BARCODE SCANNER & STOCK INTAKE (DESKTOP SPLIT VIEW)
+             ============================================================== -->
+        <section class="page-view-section" id="viewIntake">
+          <div class="intake-split-layout">
+
+            <!-- Left Column: Scanner Viewfinder & Test Codes -->
+            <div class="panel-card" style="display:flex; flex-direction:column; gap:16px;">
+              <div class="panel-title-block">
+                <h3>Barcode & QR Code Scanner</h3>
+                <p>Use webcam or simulate scanning from pre-configured test items</p>
+              </div>
+
+              <!-- Camera Viewfinder -->
+              <div class="scanner-viewfinder-desktop" id="desktopViewfinder">
+                <video id="desktopWebcamVideo" style="width:100%; height:100%; object-fit:cover; display:none;"
+                  playsinline autoplay muted></video>
+                <div id="desktopSimBg"
+                  style="position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80') center/cover; opacity:0.35;">
+                </div>
+
+                <div class="scanner-reticle-desktop">
+                  <div class="laser-beam"></div>
+                </div>
+
+                <div style="position:absolute; bottom:14px; display:flex; gap:10px;">
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:6px 14px; font-size:12px; background:rgba(0,0,0,0.7); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
+                    id="btnToggleDesktopCamera">
+                    📷 Start Webcam
+                  </button>
+                </div>
+              </div>
+
+              <!-- 1-Click Test Barcode Presets -->
+              <div>
+                <span
+                  style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">1-Click
+                  Barcode Test Simulation</span>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:8px 10px; font-size:12px; justify-content:flex-start;"
+                    onclick="simulateBarcodeScan('8901262010153')">
+                    🥛 Amul Toned Milk
+                  </button>
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:8px 10px; font-size:12px; justify-content:flex-start;"
+                    onclick="simulateBarcodeScan('8902081014799')">
+                    🥭 Mango Drink
+                  </button>
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:8px 10px; font-size:12px; justify-content:flex-start;"
+                    onclick="simulateBarcodeScan('8901725181204')">
+                    🍞 Brown Bread
+                  </button>
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:8px 10px; font-size:12px; justify-content:flex-start;"
+                    onclick="simulateBarcodeScan('8901262014427')">
+                    🥣 Vanilla Yogurt
+                  </button>
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:8px 10px; font-size:12px; justify-content:flex-start;"
+                    onclick="simulateBarcodeScan('8906001239912')">
+                    🥚 Farm Fresh Eggs
+                  </button>
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:8px 10px; font-size:12px; justify-content:flex-start;"
+                    onclick="simulateBarcodeScan('8901058852217')">
+                    🍜 Maggi Noodles
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Product Entry Form -->
+            <div class="panel-card">
+              <div class="panel-title-block" style="margin-bottom:16px;">
+                <h3>Product Intake Form</h3>
+                <p>Record stock details, manufacturing date, and expiry rules</p>
+              </div>
+
+              <form id="desktopIntakeForm">
+                <div class="intake-form-grid">
+                  <div class="form-field-group form-full-width">
+                    <label class="form-field-label" for="intakeName">Product Name *</label>
+                    <input type="text" id="intakeName" class="form-field-input" placeholder="e.g. Amul Toned Milk 500ml"
+                      required>
+                  </div>
+
+                  <div class="form-field-group">
+                    <label class="form-field-label" for="intakeCategory">Category *</label>
+                    <select id="intakeCategory" class="form-field-input" required>
+                      <option value="">Select Category</option>
+                      <option value="Dairy">Dairy</option>
+                      <option value="Bakery">Bakery</option>
+                      <option value="Beverages">Beverages</option>
+                      <option value="Pantry">Pantry Staples</option>
+                      <option value="Frozen">Frozen Foods</option>
+                      <option value="Snacks">Snacks</option>
+                    </select>
+                  </div>
+
+                  <div class="form-field-group">
+                    <label class="form-field-label" for="intakeBarcode">Barcode / SKU Number</label>
+                    <input type="text" id="intakeBarcode" class="form-field-input" placeholder="8901262010153">
+                  </div>
+
+                  <div class="form-field-group">
+                    <label class="form-field-label" for="intakePrice">Unit Price (₹) *</label>
+                    <input type="number" id="intakePrice" class="form-field-input" placeholder="25.00" min="0"
+                      step="0.5" required>
+                  </div>
+
+                  <div class="form-field-group">
+                    <label class="form-field-label" for="intakeStock">Stock Quantity *</label>
+                    <input type="number" id="intakeStock" class="form-field-input" placeholder="10" min="1" required>
+                  </div>
+
+                  <div class="form-field-group">
+                    <label class="form-field-label" for="intakeMfgDate">Manufacturing Date</label>
+                    <input type="date" id="intakeMfgDate" class="form-field-input">
+                  </div>
+
+                  <div class="form-field-group">
+                    <label class="form-field-label" for="intakeExpiryDate">Expiry Date *</label>
+                    <input type="date" id="intakeExpiryDate" class="form-field-input" required>
+                  </div>
+
+                  <!-- Real-time Shelf Life Calculation & Validation -->
+                  <div class="form-full-width"
+                    style="background:var(--primary-light); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--primary-border);">
+                    <span style="font-size:12.5px; font-weight:700; color:var(--primary-dark);"
+                      id="intakeShelfLifeFeedback">
+                      Estimated Shelf Life: Please specify an expiry date.
+                    </span>
+                  </div>
+
+                  <div class="form-field-group">
+                    <label class="form-field-label" for="intakeSupplier">Supplier / Distributor</label>
+                    <input type="text" id="intakeSupplier" class="form-field-input"
+                      placeholder="e.g. Sunrise Wholesale">
+                  </div>
+
+                  <div class="form-field-group">
+                    <label class="form-field-label" for="intakeLocation">Storage Location / Rack</label>
+                    <input type="text" id="intakeLocation" class="form-field-input"
+                      placeholder="e.g. Chiller Bay 1 / Aisle 2">
+                  </div>
+
+                  <div class="form-field-group form-full-width">
+                    <label class="form-field-label" for="intakeStorageNotes">Storage Recommendations</label>
+                    <textarea id="intakeStorageNotes" class="form-field-input" rows="2"
+                      placeholder="e.g. Keep continuously refrigerated between 2°C and 4°C."></textarea>
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px;">
+                  <button type="button" class="btn-secondary-action" onclick="resetIntakeForm()">Clear Form</button>
+                  <button type="submit" class="btn-primary-action">Save to Inventory</button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             PAGE 4: EXPIRY HEALTH & ALERT MONITOR
+             ============================================================== -->
+        <section class="page-view-section" id="viewExpiry">
+          <div class="panel-card">
+
+            <!-- Health Status Tabs -->
+            <div class="health-tabs-header">
+              <button type="button" class="health-tab-btn active" data-expiry-filter="all">
+                <span>All Products</span>
+                <span class="status-badge-table count" id="healthBadgeAll">18</span>
+              </button>
+              <button type="button" class="health-tab-btn" data-expiry-filter="expired">
+                <span>Expired (Action Required)</span>
+                <span class="status-badge-table expired" id="healthBadgeExpired">7</span>
+              </button>
+              <button type="button" class="health-tab-btn" data-expiry-filter="expiring">
+                <span>Expiring Soon (&lt; 4 Days)</span>
+                <span class="status-badge-table expiring" id="healthBadgeExpiring">24</span>
+              </button>
+              <button type="button" class="health-tab-btn" data-expiry-filter="fresh">
+                <span>Fresh & Safe Stock</span>
+                <span class="status-badge-table fresh" id="healthBadgeFresh">1,217</span>
+              </button>
+            </div>
+
+            <!-- Health Item Cards Grid -->
+            <div class="health-cards-grid" id="desktopHealthCardsContainer">
+              <!-- Populated via JS -->
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             PAGE 5: COMMUNITY FOOD DONATION & NGO NETWORK
+             ============================================================== -->
+        <section class="page-view-section" id="viewDonation">
+          <div class="panel-card" style="margin-bottom:20px;">
+            <div class="panel-title-block">
+              <h3>Community Food Donation Network</h3>
+              <p>Redirect safe, edible surplus food to local community food banks before spoilage occurs</p>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;" id="donationNetworkGrid">
+            <!-- Populated via JS from DONATION_CENTERS -->
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             PAGE 6: SMART STORAGE GUIDES (PRACTICALS 1, 3, 5)
+             ============================================================== -->
+        <section class="page-view-section" id="viewStorage">
+          <div class="panel-card" style="margin-bottom:20px;">
+            <div class="panel-title-block">
+              <h3>Smart Storage & Food Spoilage Prevention Guides</h3>
+              <p>Optimum temperature ranges, humidity control, and FIFO practices for each category</p>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;" id="desktopStorageGuideGrid">
+            <!-- Populated via JS from STORAGE_GUIDES -->
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             PAGE 7: REPORTS & ANALYTICS (FIGMA SCREEN 6)
+             ============================================================== -->
+        <section class="page-view-section" id="viewAnalytics">
+          <div class="dashboard-secondary-split" style="margin-bottom:20px;">
+
+            <!-- Donut Chart Box -->
+            <div class="panel-card">
+              <div class="panel-header-row">
+                <div class="panel-title-block">
+                  <h3>Monthly Food Inventory Breakdown</h3>
+                  <p>Departmental distribution of stock</p>
+                </div>
+                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;"
+                  onclick="exportInventoryData()">Export CSV</button>
+              </div>
+
+              <div style="display:flex; align-items:center; justify-content:space-around; gap:20px; padding:20px 0;">
+                <div style="position:relative; width:160px; height:160px;">
+                  <svg viewBox="0 0 42 42" style="transform:rotate(-90deg); width:100%; height:100%;">
+                    <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--bg-subtle)"
+                      stroke-width="5" />
+                    <circle id="deskDonutDairy" cx="21" cy="21" r="15.91549430918954" fill="transparent"
+                      stroke="#10B981" stroke-width="5" stroke-dasharray="34 66" stroke-dashoffset="0" />
+                    <circle id="deskDonutBakery" cx="21" cy="21" r="15.91549430918954" fill="transparent"
+                      stroke="#3B82F6" stroke-width="5" stroke-dasharray="28 72" stroke-dashoffset="-34" />
+                    <circle id="deskDonutBeverages" cx="21" cy="21" r="15.91549430918954" fill="transparent"
+                      stroke="#F59E0B" stroke-width="5" stroke-dasharray="18 82" stroke-dashoffset="-62" />
+                    <circle id="deskDonutSnacks" cx="21" cy="21" r="15.91549430918954" fill="transparent"
+                      stroke="#8B5CF6" stroke-width="5" stroke-dasharray="10 90" stroke-dashoffset="-80" />
+                    <circle id="deskDonutFrozen" cx="21" cy="21" r="15.91549430918954" fill="transparent"
+                      stroke="#06B6D4" stroke-width="5" stroke-dasharray="10 90" stroke-dashoffset="-90" />
+                  </svg>
+                  <div
+                    style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <span style="font-size:22px; font-weight:800; color:var(--text-main);">1,248</span>
+                    <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase;">Items</span>
+                  </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:8px; flex:1;" id="analyticsLegendContainer">
+                  <!-- Dynamic legend -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Performance Metrics Grid -->
+            <div class="panel-card">
+              <div class="panel-header-row">
+                <div class="panel-title-block">
+                  <h3>Efficiency & Spoilage Metrics</h3>
+                  <p>Store performance in waste reduction</p>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                <div class="kpi-tile-card">
+                  <span class="kpi-tile-label">Reminders Sent</span>
+                  <div class="kpi-tile-value" style="color:var(--accent-blue);">12</div>
+                  <span class="kpi-tile-sub">Automated alerts dispatched</span>
+                </div>
+                <div class="kpi-tile-card">
+                  <span class="kpi-tile-label">Top Moving Items</span>
+                  <div class="kpi-tile-value" style="color:var(--status-fresh);">8</div>
+                  <span class="kpi-tile-sub">Fastest FIFO turnover</span>
+                </div>
+                <div class="kpi-tile-card">
+                  <span class="kpi-tile-label">Slow Sellers</span>
+                  <div class="kpi-tile-value" style="color:var(--status-expiring);">3</div>
+                  <span class="kpi-tile-sub">Needs promotional push</span>
+                </div>
+                <div class="kpi-tile-card">
+                  <span class="kpi-tile-label">High Wastage Risks</span>
+                  <div class="kpi-tile-value" style="color:var(--status-expired);">2</div>
+                  <span class="kpi-tile-sub">Require immediate markdown</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             PAGE 8: STORE SETTINGS & DATA UTILITIES
+             ============================================================== -->
+        <section class="page-view-section" id="viewSettings">
+          <div class="panel-card" style="max-width:800px;">
+            <div class="panel-title-block" style="margin-bottom:20px;">
+              <h3>Store Settings & Configuration</h3>
+              <p>Configure notification thresholds, store profile, and data management</p>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:20px;">
+              <div class="form-field-group">
+                <label class="form-field-label">Expiry Notification Window</label>
+                <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">
+                  Receive alerts when food items are within this number of days before expiry:
+                </p>
+                <div style="display:flex; gap:10px;">
+                  <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(1)">1 Day</button>
+                  <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(2)">2 Days</button>
+                  <button type="button" class="filter-btn-pill active" onclick="setSettingThreshold(4)">4 Days
+                    (Recommended)</button>
+                  <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(7)">7 Days</button>
+                </div>
+              </div>
+
+              <div class="form-field-group">
+                <label class="form-field-label">Store Profile Information</label>
+                <input type="text" class="form-field-input" value="Green Basket Supermarket" style="margin-bottom:8px;">
+                <input type="text" class="form-field-input" value="CP2 - Anand Campus, Gujarat"
+                  style="margin-bottom:8px;">
+                <input type="text" class="form-field-input"
+                  value="Team SHE Innovates (Prakruti, Priya, Pushti, Richa, Richi)">
+              </div>
+
+              <div
+                style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <h4 style="font-size:14px; font-weight:700;">Reset to Default Sample Data</h4>
+                  <p style="font-size:12px; color:var(--text-muted);">Restore original Product Ideation sample items</p>
+                </div>
+                <button type="button" class="btn-secondary-action" onclick="resetSampleData()">Reset Sample
+                  Data</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       DESKTOP MODAL 1: PRODUCT DETAILS (MATCHING MANGO DRINK SCREEN)
+       ==================================================================== -->
+  <div class="desktop-modal-backdrop" id="desktopProductDetailModal">
+    <div class="desktop-modal-window">
+      <div class="modal-header-strip">
+        <h3>Product Details & FIFO Tracking</h3>
+        <button type="button" class="btn-table-action"
+          onclick="closeDesktopModal('desktopProductDetailModal')">✕</button>
+      </div>
+
+      <div class="modal-body-scroll">
+        <div
+          style="display:flex; align-items:center; gap:20px; background:var(--bg-subtle); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+          <div
+            style="width:70px; height:70px; background:#FFFFFF; border-radius:var(--radius-xs); border:1px solid var(--border-light); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+            <img id="deskModalProductImg" src="assets/mango-drink.svg" alt="Product"
+              style="width:100%; height:100%; object-fit:contain; padding:6px;">
+          </div>
+          <div>
+            <h3 id="deskModalProductName" style="font-size:18px; font-weight:800; color:var(--text-main);">Mango Drink
+              500ml</h3>
+            <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+              <span class="status-badge-table count" id="deskModalCategory">BEVERAGES</span>
+              <span class="status-badge-table expired" id="deskModalStatusBadge">Expired</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;">
+          <div class="kpi-tile-card" style="padding:10px 14px;">
+            <span class="kpi-tile-label">Unit Price</span>
+            <div style="font-size:16px; font-weight:800;" id="deskModalPrice">₹25.00</div>
+          </div>
+          <div class="kpi-tile-card" style="padding:10px 14px;">
+            <span class="kpi-tile-label">Stock Units</span>
+            <div style="font-size:16px; font-weight:800;" id="deskModalStock">3 units</div>
+          </div>
+          <div class="kpi-tile-card" style="padding:10px 14px;">
+            <span class="kpi-tile-label">Days Left</span>
+            <div style="font-size:16px; font-weight:800;" id="deskModalDays">3 days ago</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div
+            style="background:var(--bg-subtle); padding:12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
+            <span style="font-size:11.5px; color:var(--text-muted); display:block;">Manufacturing Date</span>
+            <strong style="font-size:13.5px;" id="deskModalMfg">01 Mar 2026</strong>
+          </div>
+          <div
+            style="background:var(--bg-subtle); padding:12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
+            <span style="font-size:11.5px; color:var(--text-muted); display:block;">Expiry Date</span>
+            <strong style="font-size:13.5px;" id="deskModalExp">12 Nov 2026</strong>
+          </div>
+          <div
+            style="background:var(--bg-subtle); padding:12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
+            <span style="font-size:11.5px; color:var(--text-muted); display:block;">Barcode</span>
+            <strong style="font-size:13.5px;" id="deskModalBarcode">8902081014799</strong>
+          </div>
+          <div
+            style="background:var(--bg-subtle); padding:12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
+            <span style="font-size:11.5px; color:var(--text-muted); display:block;">Supplier</span>
+            <strong style="font-size:13.5px;" id="deskModalSupplier">Sunrise Wholesale</strong>
+          </div>
+        </div>
+
+        <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:14px; border-radius:var(--radius-sm);">
+          <strong style="font-size:12.5px; color:#166534; display:block; margin-bottom:4px;">Optimal Storage
+            Recommendation:</strong>
+          <p style="font-size:12.5px; color:#14532D; line-height:1.4;" id="deskModalStorage">
+            Store in cool, dry place away from direct sunlight. Refrigerate after opening and consume within 3 days.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer-strip">
+        <button type="button" class="btn-secondary-action" id="btnModalDelete"
+          style="color:var(--status-expired); border-color:var(--status-expired-border);">Remove Stock</button>
+        <button type="button" class="btn-secondary-action" id="btnModalDiscount"
+          style="color:#B45309; border-color:#FCD34D;">Apply Discount</button>
+        <button type="button" class="btn-primary-action" id="btnModalMarkSold">Mark as Sold (FIFO)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       DESKTOP MODAL 2: CLEARANCE DISCOUNT CALCULATOR
+       ==================================================================== -->
+  <div class="desktop-modal-backdrop" id="desktopDiscountModal">
+    <div class="desktop-modal-window" style="max-width:480px;">
+      <div class="modal-header-strip">
+        <h3>Clearance Discount Calculator</h3>
+        <button type="button" class="btn-table-action" onclick="closeDesktopModal('desktopDiscountModal')">✕</button>
+      </div>
+
+      <div class="modal-body-scroll">
+        <div
+          style="background:var(--bg-subtle); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+          <h4 id="deskDiscountItemName" style="font-size:15px; font-weight:700;">Amul Toned Milk</h4>
+          <span style="font-size:13px; color:var(--text-muted);" id="deskDiscountOriginalPrice">Original: ₹27.00</span>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="filter-btn-pill" onclick="setDeskDiscountRate(15)">15% OFF</button>
+          <button type="button" class="filter-btn-pill active" onclick="setDeskDiscountRate(25)">25% OFF</button>
+          <button type="button" class="filter-btn-pill" onclick="setDeskDiscountRate(40)">40% OFF</button>
+          <button type="button" class="filter-btn-pill" onclick="setDeskDiscountRate(50)">50% OFF</button>
+        </div>
+
+        <div class="form-field-group">
+          <label class="form-field-label">Custom Discount Rate (%)</label>
+          <input type="number" id="deskCustomDiscountInput" class="form-field-input" min="5" max="90" value="25">
+        </div>
+
+        <div
+          style="display:flex; justify-content:space-between; align-items:center; background:#ECFDF5; padding:14px; border-radius:var(--radius-sm); border:1px solid #A7F3D0;">
+          <span style="font-weight:700; color:#065F46;">New Clearance Price:</span>
+          <span style="font-size:22px; font-weight:800; color:#059669;" id="deskDiscountPreviewPrice">₹20.25</span>
+        </div>
+      </div>
+
+      <div class="modal-footer-strip">
+        <button type="button" class="btn-secondary-action"
+          onclick="closeDesktopModal('desktopDiscountModal')">Cancel</button>
+        <button type="button" class="btn-primary-action" id="btnConfirmDeskDiscount">Apply Discount</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       DESKTOP MODAL 3: SCHEDULE FOOD DONATION
+       ==================================================================== -->
+  <div class="desktop-modal-backdrop" id="desktopDonationModal">
+    <div class="desktop-modal-window" style="max-width:540px;">
+      <div class="modal-header-strip">
+        <h3>Schedule Food Donation Pickup</h3>
+        <button type="button" class="btn-table-action" onclick="closeDesktopModal('desktopDonationModal')">✕</button>
+      </div>
+
+      <div class="modal-body-scroll">
+        <p style="font-size:13px; color:var(--text-muted);">
+          Connect directly with verified NGO food banks to collect surplus near-expiry products:
+        </p>
+        <div style="display:flex; flex-direction:column; gap:10px;" id="deskModalDonationList">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <div class="modal-footer-strip">
+        <button type="button" class="btn-secondary-action"
+          onclick="closeDesktopModal('desktopDonationModal')">Cancel</button>
+        <button type="button" class="btn-primary-action" id="btnConfirmDeskDonation">Schedule Pickup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       DESKTOP UNDO TOAST NOTIFICATION (HEURISTIC H3)
+       ==================================================================== -->
+  <div class="desktop-undo-toast" id="desktopUndoToast">
+    <div class="toast-message-text">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      <span id="desktopToastMsg">Item updated successfully.</span>
+    </div>
+    <button type="button" class="toast-undo-button" id="btnDesktopUndo">Undo (5s)</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>

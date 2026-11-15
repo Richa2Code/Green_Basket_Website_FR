@@ -1459,6 +1459,28 @@ html, body {
   border-color: var(--text-subtle);
 }
 
+.btn-danger-action {
+  background: var(--status-expired);
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+  transition: var(--transition);
+}
+
+.btn-danger-action:hover {
+  background: #DC2626;
+  transform: translateY(-1px);
+}
+
 /* ==========================================================================
    UNDO TOAST NOTIFICATION
    ========================================================================== */

@@ -43,7 +43,7 @@ const SoundFX = {
       gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(this.ctx.currentTime + duration);
-    } catch (e) {}
+    } catch (e) { }
   },
   scanSuccess() {
     this.beep(1200, 0.08, "sine");
@@ -173,27 +173,35 @@ function setupAuthControls() {
   authForm?.addEventListener("submit", handleLogin);
   btnDemo?.addEventListener("click", handleLogin);
 
-  // Logout handler
-  const handleLogout = () => {
-    if (confirm("Are you sure you want to log out of Green Basket Supermarket?")) {
-      AppState.isLoggedIn = false;
-      localStorage.setItem("pi_desk_logged_in", "false");
+  // Open Logout Confirmation Popup (replaces default browser confirm/alert box)
+  const promptLogout = () => {
+    // Close mobile drawer if currently open
+    const sidebar = document.getElementById("appSidebar");
+    const backdrop = document.getElementById("sidebarBackdrop");
+    sidebar?.classList.remove("sidebar-open");
+    backdrop?.classList.remove("active");
 
-      // Close mobile drawer if currently open
-      const sidebar = document.getElementById("appSidebar");
-      const backdrop = document.getElementById("sidebarBackdrop");
-      sidebar?.classList.remove("sidebar-open");
-      backdrop?.classList.remove("active");
+    openDesktopModal("desktopLogoutModal");
+    SoundFX.beep(480, 0.08);
+  };
 
-      syncAuthDisplay();
-      SoundFX.beep(440, 0.12, "triangle");
-    }
+  // Perform actual sign out upon modal confirmation
+  const executeLogout = () => {
+    closeDesktopModal("desktopLogoutModal");
+    AppState.isLoggedIn = false;
+    localStorage.setItem("pi_desk_logged_in", "false");
+
+    syncAuthDisplay();
+    SoundFX.beep(440, 0.12, "triangle");
   };
 
   // Wire all logout triggers (sidebar footer, top navbar, settings page)
-  document.getElementById("btnSidebarLogout")?.addEventListener("click", handleLogout);
-  document.getElementById("btnHeaderLogout")?.addEventListener("click", handleLogout);
-  document.getElementById("btnSettingsLogout")?.addEventListener("click", handleLogout);
+  document.getElementById("btnSidebarLogout")?.addEventListener("click", promptLogout);
+  document.getElementById("btnHeaderLogout")?.addEventListener("click", promptLogout);
+  document.getElementById("btnSettingsLogout")?.addEventListener("click", promptLogout);
+
+  // Wire confirm button inside the logout modal
+  document.getElementById("btnConfirmLogoutModal")?.addEventListener("click", executeLogout);
 }
 
 // ==========================================================================
@@ -551,7 +559,7 @@ function renderPantryTable() {
       statusBadge = `<span class="status-badge-table fresh">Fresh (${item.daysRemaining}d left)</span>`;
     }
 
-    const priceDisplay = item.discount > 0 
+    const priceDisplay = item.discount > 0
       ? `<span style="text-decoration:line-through; font-size:11px; opacity:0.6;">₹${item.price.toFixed(2)}</span> <strong style="color:#059669;">₹${(item.price * (1 - item.discount / 100)).toFixed(2)}</strong>`
       : `<strong>₹${item.price.toFixed(2)}</strong>`;
 
@@ -743,7 +751,7 @@ async function toggleWebcam() {
       if (btn) btn.textContent = "⏹ Stop Webcam";
       SoundFX.beep(1000, 0.1);
     } catch (e) {
-      alert("Webcam access unavailable or blocked. You can use the 1-Click Barcode Test buttons below.");
+      showToast("Webcam unavailable. Use the 1-Click Barcode Test buttons below.");
     }
   }
 }
@@ -1209,6 +1217,21 @@ function closeDesktopModal(id) {
   const modal = document.getElementById(id);
   if (modal) modal.classList.remove("open");
 }
+
+// Close modals when clicking backdrop or pressing Escape
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.classList.contains("desktop-modal-backdrop")) {
+    e.target.classList.remove("open");
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".desktop-modal-backdrop.open").forEach(m => {
+      m.classList.remove("open");
+    });
+  }
+});
 
 function formatDate(dateStr) {
   if (!dateStr) return "N/A";

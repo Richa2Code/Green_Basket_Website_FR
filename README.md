@@ -97,7 +97,8 @@ Unlike a mobile phone frame, this system is architected as an **executive deskto
 - **Multi-Point Logout Access**:
   - **Sidebar Footer**: Direct logout icon button next to store profile.
   - **Top Navigation Bar**: Dedicated utility logout button next to notification bell.
-  - **Settings Page**: Account Session logout card with confirmation dialog.
+  - **Settings Page**: Account Session logout card.
+  - **Dedicated UI Pop-Up Modal**: Replaces intrusive browser alert/confirm boxes with a custom-designed confirmation popup (`#desktopLogoutModal`) displaying user session details, safety notes, and "Yes, Log Out" action.
 - **Session Protection**: Halts background webcam streams and securely resets view state upon sign-out.
 
 ---

@@ -113,12 +113,33 @@ function updateInventoryStatuses() {
 // Sidebar Navigation & View Switcher
 // ==========================================================================
 function setupSidebarNavigation() {
+  const sidebar = document.getElementById("appSidebar");
+  const backdrop = document.getElementById("sidebarBackdrop");
+  const btnHamburger = document.getElementById("btnSidebarHamburger");
+  const btnClose = document.getElementById("btnCloseSidebarMobile");
+
+  const openMobileSidebar = () => {
+    sidebar?.classList.add("sidebar-open");
+    backdrop?.classList.add("active");
+    SoundFX.beep(700, 0.05);
+  };
+
+  const closeMobileSidebar = () => {
+    sidebar?.classList.remove("sidebar-open");
+    backdrop?.classList.remove("active");
+  };
+
+  btnHamburger?.addEventListener("click", openMobileSidebar);
+  btnClose?.addEventListener("click", closeMobileSidebar);
+  backdrop?.addEventListener("click", closeMobileSidebar);
+
   const navButtons = document.querySelectorAll(".sidebar-nav-btn");
   navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       const targetView = btn.dataset.view;
       if (targetView) {
         switchView(targetView);
+        closeMobileSidebar();
         SoundFX.beep(600, 0.05);
       }
     });

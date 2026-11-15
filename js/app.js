@@ -16,6 +16,7 @@ const AppState = {
   undoTimeout: null,
   notifications: [],
   webcamStream: null,
+  isLoggedIn: true,
   referenceDate: new Date("2026-11-15T12:00:00") // Project baseline date
 };
 
@@ -59,6 +60,7 @@ const SoundFX = {
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
   loadData();
+  setupAuthControls();
   setupSidebarNavigation();
   setupGlobalControls();
   setupIntakeForm();
@@ -107,6 +109,91 @@ function updateInventoryStatuses() {
     item.daysRemaining = calc.days;
     item.status = calc.status;
   });
+}
+
+// ==========================================================================
+// Authentication & Session Management
+// ==========================================================================
+function setupAuthControls() {
+  const authPortal = document.getElementById("authPortal");
+  const mainAppLayout = document.getElementById("mainAppLayout");
+  const authForm = document.getElementById("authPortalForm");
+  const btnDemo = document.getElementById("btnAuthPortalDemo");
+  const tabEmail = document.getElementById("authTabEmail");
+  const tabPhone = document.getElementById("authTabPhone");
+  const emailGroup = document.getElementById("portalEmailGroup");
+  const phoneGroup = document.getElementById("portalPhoneGroup");
+
+  // Read saved session state (persists across reloads)
+  const savedSession = localStorage.getItem("pi_desk_logged_in");
+  AppState.isLoggedIn = (savedSession !== "false");
+
+  const syncAuthDisplay = () => {
+    if (AppState.isLoggedIn) {
+      if (authPortal) authPortal.style.display = "none";
+      if (mainAppLayout) mainAppLayout.style.display = "flex";
+    } else {
+      if (authPortal) authPortal.style.display = "flex";
+      if (mainAppLayout) mainAppLayout.style.display = "none";
+      // Halt any active camera stream
+      if (AppState.webcamStream) {
+        stopWebcamStream();
+      }
+    }
+  };
+
+  syncAuthDisplay();
+
+  // Tab Switching (Email vs Phone)
+  tabEmail?.addEventListener("click", () => {
+    tabEmail.classList.add("active");
+    tabPhone?.classList.remove("active");
+    if (emailGroup) emailGroup.style.display = "flex";
+    if (phoneGroup) phoneGroup.style.display = "none";
+  });
+
+  tabPhone?.addEventListener("click", () => {
+    tabPhone.classList.add("active");
+    tabEmail?.classList.remove("active");
+    if (phoneGroup) phoneGroup.style.display = "flex";
+    if (emailGroup) emailGroup.style.display = "none";
+  });
+
+  // Login handler
+  const handleLogin = (e) => {
+    if (e) e.preventDefault();
+    AppState.isLoggedIn = true;
+    localStorage.setItem("pi_desk_logged_in", "true");
+    syncAuthDisplay();
+    SoundFX.actionSuccess();
+    switchView("viewDashboard");
+    showToast("Signed in as Green Basket Supermarket Manager.");
+  };
+
+  authForm?.addEventListener("submit", handleLogin);
+  btnDemo?.addEventListener("click", handleLogin);
+
+  // Logout handler
+  const handleLogout = () => {
+    if (confirm("Are you sure you want to log out of Green Basket Supermarket?")) {
+      AppState.isLoggedIn = false;
+      localStorage.setItem("pi_desk_logged_in", "false");
+
+      // Close mobile drawer if currently open
+      const sidebar = document.getElementById("appSidebar");
+      const backdrop = document.getElementById("sidebarBackdrop");
+      sidebar?.classList.remove("sidebar-open");
+      backdrop?.classList.remove("active");
+
+      syncAuthDisplay();
+      SoundFX.beep(440, 0.12, "triangle");
+    }
+  };
+
+  // Wire all logout triggers (sidebar footer, top navbar, settings page)
+  document.getElementById("btnSidebarLogout")?.addEventListener("click", handleLogout);
+  document.getElementById("btnHeaderLogout")?.addEventListener("click", handleLogout);
+  document.getElementById("btnSettingsLogout")?.addEventListener("click", handleLogout);
 }
 
 // ==========================================================================

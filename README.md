@@ -88,7 +88,31 @@ Unlike a mobile phone frame, this system is architected as an **executive deskto
 ### 8. ⚙️ Store Configuration & Settings (`#viewSettings`)
 - Customizable alert threshold window (1, 2, 4, or 7 days before expiry).
 - Store profile details management.
+- Account session management with instant logout capability.
 - Reset to original Product Ideation sample dataset.
+
+### 9. 🔐 Authentication Portal & Session Management
+- **Full Login & Logout Lifecycle**: Securely manages session status in `localStorage` (`pi_desk_logged_in`).
+- **Flexible Login Portal**: Supports Email/Password or Phone OTP authentication tabs, plus a 1-click **Instant Demo Access** button.
+- **Multi-Point Logout Access**:
+  - **Sidebar Footer**: Direct logout icon button next to store profile.
+  - **Top Navigation Bar**: Dedicated utility logout button next to notification bell.
+  - **Settings Page**: Account Session logout card with confirmation dialog.
+- **Session Protection**: Halts background webcam streams and securely resets view state upon sign-out.
+
+---
+
+## 📱 Multi-Device Responsive Design System
+
+The platform dynamically adapts across all device form-factors:
+- **Desktop Monitors & Large Screens (> 1200px)**: Permanent dark SaaS sidebar, full multi-column executive KPI cards, side-by-side data tables, and split barcode viewfinders.
+- **Laptops & Tablets (900px – 1024px)**: Single-column analytics layouts with full-width tables and optimized spacing.
+- **Tablets & Mobile Handhelds (< 900px)**:
+  - Sidebar smoothly converts into a collapsible slide-out drawer accessible via the top hamburger button (`☰`).
+  - Darkened backdrop overlay (`.sidebar-backdrop`) for focus.
+  - Sticky mobile-optimized header bar.
+  - 2-column and 1-column responsive metric grids.
+  - Full-screen friendly modals and touch-friendly buttons.
 
 ---
 

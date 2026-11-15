@@ -106,6 +106,150 @@ html, body {
 }
 
 /* ==========================================================================
+   AUTHENTICATION & LOGIN PORTAL (Displayed when logged out)
+   ========================================================================== */
+.auth-portal-wrapper {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 15%, #1E293B 0%, #0B1120 100%);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+}
+
+.auth-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeInScale 0.25s ease-out;
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.auth-brand-header {
+  text-align: center;
+}
+
+.auth-brand-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px auto;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+}
+
+.auth-brand-header h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.3px;
+}
+
+.auth-brand-header p {
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.auth-toggle-pill {
+  display: flex;
+  background: var(--bg-subtle);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+}
+
+.auth-tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.auth-tab-btn.active {
+  background: var(--bg-surface);
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-subtle);
+  pointer-events: none;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 11px 14px 11px 38px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-light);
+  background: var(--bg-subtle);
+  font-size: 14px;
+  color: var(--text-main);
+  outline: none;
+  transition: var(--transition);
+}
+
+.auth-input:focus {
+  border-color: var(--primary);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 3px var(--primary-focus);
+}
+
+.btn-auth-demo {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border: 1.5px dashed var(--primary);
+  width: 100%;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-auth-demo:hover {
+  background: #D1FAE5;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
    LAYOUT STRUCTURE: SIDEBAR + MAIN VIEWPORT
    ========================================================================== */
 .app-layout {
@@ -116,7 +260,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Mobile Sidebar Backdrop (Dark blur on mobile when menu opens) */
+/* Mobile Sidebar Backdrop */
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
@@ -281,7 +425,7 @@ html, body {
 .sidebar-badge.warning { background: #F59E0B; color: #FFFFFF; }
 .sidebar-badge.count { background: rgba(255, 255, 255, 0.15); color: #FFFFFF; }
 
-/* Sidebar Store Card Footer */
+/* Sidebar Store Card Footer with Logout */
 .sidebar-footer {
   padding: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -309,6 +453,11 @@ html, body {
   flex-shrink: 0;
 }
 
+.sidebar-store-meta {
+  flex: 1;
+  min-width: 0;
+}
+
 .sidebar-store-meta h4 {
   font-size: 13px;
   font-weight: 700;
@@ -324,6 +473,27 @@ html, body {
   white-space: nowrap;
 }
 
+/* Sidebar Logout Button */
+.btn-sidebar-logout {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.btn-sidebar-logout:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+}
+
 /* ==========================================================================
    MAIN VIEWPORT & TOP NAVBAR
    ========================================================================== */
@@ -335,10 +505,9 @@ html, body {
   flex-direction: column;
   background: var(--bg-body);
   transition: margin-left var(--transition);
-  min-width: 0; /* Prevents overflow clipping in flex children */
+  min-width: 0;
 }
 
-/* Desktop & Tablet Top Navbar */
 .desktop-top-header {
   min-height: var(--header-height);
   background: var(--bg-surface);
@@ -480,6 +649,12 @@ html, body {
   background: var(--bg-surface);
   border-color: var(--primary);
   color: var(--primary);
+}
+
+.btn-logout-icon:hover {
+  background: var(--status-expired-bg);
+  border-color: var(--status-expired-border);
+  color: var(--status-expired);
 }
 
 .notif-unread-dot {
@@ -857,7 +1032,7 @@ html, body {
 
 .inventory-data-table {
   width: 100%;
-  min-width: 760px; /* Ensures table remains legible on mobile via smooth horizontal scroll */
+  min-width: 760px;
   border-collapse: collapse;
   text-align: left;
   font-size: 13.5px;
@@ -996,7 +1171,7 @@ html, body {
 }
 
 /* ==========================================================================
-   INTAKE & SCANNER (RESPONSIVE SPLIT)
+   INTAKE & SCANNER
    ========================================================================== */
 .intake-split-layout {
   display: grid;
@@ -1131,7 +1306,6 @@ html, body {
   gap: 8px;
 }
 
-/* Dynamic Responsive Grids for Donation and Storage */
 .responsive-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1355,7 +1529,6 @@ html, body {
 
 /* Tablets (<= 900px) */
 @media (max-width: 900px) {
-  /* Show hamburger button and slide sidebar out of view */
   .btn-sidebar-hamburger {
     display: flex;
   }
@@ -1401,7 +1574,7 @@ html, body {
   }
 
   .header-status-badge {
-    display: none; /* Hide status badge to give space for CTA and search */
+    display: none;
   }
 
   .header-global-search {
@@ -1467,6 +1640,10 @@ html, body {
   .modal-footer-strip button {
     width: 100%;
   }
+
+  .auth-card {
+    padding: 24px 18px;
+  }
 }
 
 /* Very Small Mobile Screens (<= 400px) */
@@ -1476,7 +1653,7 @@ html, body {
   }
 
   .btn-header-cta span {
-    display: none; /* Icon-only on tiny screens */
+    display: none;
   }
 
   .btn-header-cta {

@@ -1,34 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Green Basket | Smart Product Expiry Tracker & Inventory Management</title>
-  <meta name="description"
-    content="Professional responsive web application for grocery inventory management, automated expiry tracking, FIFO optimization, and food waste prevention.">
+  <meta name="description" content="Professional responsive web application for grocery inventory management, automated expiry tracking, FIFO optimization, and food waste prevention.">
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
 </head>
-
 <body>
+
+  <!-- ====================================================================
+       AUTHENTICATION & LOGIN PORTAL (Displayed when logged out)
+       ==================================================================== -->
+  <div class="auth-portal-wrapper" id="authPortal" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-brand-header">
+        <div class="auth-brand-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h2>Green Basket</h2>
+        <p>Smart Expiry Tracker & Inventory</p>
+      </div>
+
+      <div class="auth-toggle-pill">
+        <button type="button" class="auth-tab-btn active" id="authTabEmail">Email Address</button>
+        <button type="button" class="auth-tab-btn" id="authTabPhone">Phone Number</button>
+      </div>
+
+      <form id="authPortalForm" style="display:flex; flex-direction:column; gap:14px;">
+        <div class="form-field-group" id="portalEmailGroup">
+          <label class="form-field-label">Email Address</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <input type="email" id="authEmailInput" class="auth-input" value="greenbasket@store.com" placeholder="manager@greenbasket.com">
+          </div>
+        </div>
+
+        <div class="form-field-group" id="portalPhoneGroup" style="display: none;">
+          <label class="form-field-label">Phone Number</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </span>
+            <input type="tel" id="authPhoneInput" class="auth-input" value="+91 98250 12345" placeholder="+91 98765 43210">
+          </div>
+        </div>
+
+        <div class="form-field-group">
+          <label class="form-field-label">Password</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input type="password" id="authPasswordInput" class="auth-input" value="password123" placeholder="Enter password">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary-action" style="padding:12px; font-size:14px; margin-top:4px;">
+          <span>Sign In to Dashboard &rarr;</span>
+        </button>
+
+        <button type="button" class="btn-auth-demo" id="btnAuthPortalDemo">
+          <span>⚡ Instant Demo Access (1-Click)</span>
+        </button>
+      </form>
+
+      <div style="text-align:center; font-size:11.5px; color:var(--text-muted); padding-top:6px; border-top:1px solid var(--border-light); line-height:1.4;">
+        Course Code: 102003408 &bull; Product Ideation<br>
+        SHE Innovates &bull; GCET Anand
+      </div>
+    </div>
+  </div>
 
   <!-- Mobile Backdrop Overlay (Darkens background when mobile drawer is open) -->
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
-  <div class="app-layout">
+  <!-- ====================================================================
+       AUTHENTICATED APP LAYOUT
+       ==================================================================== -->
+  <div class="app-layout" id="mainAppLayout">
 
-    <!-- ====================================================================
-         SIDEBAR NAVIGATION (Responsive: Permanent on desktop, Slide drawer on mobile)
-         ==================================================================== -->
+    <!-- SIDEBAR NAVIGATION -->
     <aside class="app-sidebar" id="appSidebar">
       <div class="sidebar-header">
         <div class="sidebar-brand-wrapper">
           <div class="sidebar-logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
           </div>
           <div class="sidebar-brand-text">
@@ -40,8 +103,8 @@
         <!-- Mobile Close Button -->
         <button type="button" class="sidebar-close-mobile-btn" id="btnCloseSidebarMobile" title="Close Menu">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
       </div>
@@ -55,10 +118,10 @@
               <button type="button" class="sidebar-nav-btn active" data-view="viewDashboard">
                 <div class="sidebar-btn-left">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
                   </svg>
                   <span class="sidebar-btn-label">Dashboard</span>
                 </div>
@@ -68,8 +131,8 @@
               <button type="button" class="sidebar-nav-btn" data-view="viewPantry">
                 <div class="sidebar-btn-left">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                   </svg>
                   <span class="sidebar-btn-label">Pantry & Inventory</span>
                 </div>
@@ -87,9 +150,9 @@
               <button type="button" class="sidebar-nav-btn" data-view="viewIntake">
                 <div class="sidebar-btn-left">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <line x1="4" y1="4" x2="20" y2="4" />
-                    <line x1="4" y1="20" x2="20" y2="20" />
-                    <rect x="8" y="8" width="8" height="8" />
+                    <line x1="4" y1="4" x2="20" y2="4"/>
+                    <line x1="4" y1="20" x2="20" y2="20"/>
+                    <rect x="8" y="8" width="8" height="8"/>
                   </svg>
                   <span class="sidebar-btn-label">Barcode & Intake</span>
                 </div>
@@ -100,8 +163,8 @@
               <button type="button" class="sidebar-nav-btn" data-view="viewExpiry">
                 <div class="sidebar-btn-left">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
                   </svg>
                   <span class="sidebar-btn-label">Expiry Health</span>
                 </div>
@@ -112,8 +175,7 @@
               <button type="button" class="sidebar-nav-btn" data-view="viewDonation">
                 <div class="sidebar-btn-left">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path
-                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                   </svg>
                   <span class="sidebar-btn-label">Donation Hub</span>
                 </div>
@@ -130,8 +192,8 @@
               <button type="button" class="sidebar-nav-btn" data-view="viewStorage">
                 <div class="sidebar-btn-left">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" />
-                    <path d="M12 6v6l4 2" />
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+                    <path d="M12 6v6l4 2"/>
                   </svg>
                   <span class="sidebar-btn-label">Storage Guides</span>
                 </div>
@@ -141,9 +203,9 @@
               <button type="button" class="sidebar-nav-btn" data-view="viewAnalytics">
                 <div class="sidebar-btn-left">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <line x1="18" y1="20" x2="18" y2="10" />
-                    <line x1="12" y1="20" x2="12" y2="4" />
-                    <line x1="6" y1="20" x2="6" y2="14" />
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
                   </svg>
                   <span class="sidebar-btn-label">Reports & Analytics</span>
                 </div>
@@ -153,9 +215,8 @@
               <button type="button" class="sidebar-nav-btn" data-view="viewSettings">
                 <div class="sidebar-btn-left">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <circle cx="12" cy="12" r="3" />
-                    <path
-                      d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                   </svg>
                   <span class="sidebar-btn-label">Settings</span>
                 </div>
@@ -165,32 +226,36 @@
         </div>
       </div>
 
-      <!-- Sidebar Footer -->
+      <!-- Sidebar Footer with Logout Button -->
       <div class="sidebar-footer">
         <div class="sidebar-store-card">
           <div class="sidebar-store-avatar">GB</div>
           <div class="sidebar-store-meta">
-            <h4>Green Basket Supermarket</h4>
-            <p>SHE Innovates &bull; CP2 Batch C</p>
+            <h4>Green Basket</h4>
+            <p>SHE Innovates &bull; CP2</p>
           </div>
+          <button type="button" class="btn-sidebar-logout" id="btnSidebarLogout" title="Log out of Store">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
         </div>
       </div>
     </aside>
 
-    <!-- ====================================================================
-         MAIN VIEWPORT & RESPONSIVE NAVBAR
-         ==================================================================== -->
+    <!-- MAIN VIEWPORT & NAVBAR -->
     <div class="app-main-viewport">
 
       <header class="desktop-top-header">
         <div class="header-left-section">
           <!-- Hamburger Toggle (Shown on mobile & tablets) -->
           <button type="button" class="btn-sidebar-hamburger" id="btnSidebarHamburger" title="Open Navigation Menu">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-              stroke-linecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
             </svg>
           </button>
 
@@ -200,12 +265,11 @@
           <div class="header-global-search">
             <span class="search-field-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
             </span>
-            <input type="text" id="globalHeaderSearch" class="search-field-input"
-              placeholder="Quick search inventory, barcodes...">
+            <input type="text" id="globalHeaderSearch" class="search-field-input" placeholder="Quick search inventory, barcodes...">
           </div>
         </div>
 
@@ -218,32 +282,41 @@
           <!-- Theme Switcher -->
           <button type="button" class="icon-btn-utility" id="btnToggleTheme" title="Toggle Light/Dark Theme">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="1" y1="12" x2="3" y2="12" />
-              <line x1="21" y1="12" x2="23" y2="12" />
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
             </svg>
           </button>
 
           <!-- Notification Bell -->
           <button type="button" class="icon-btn-utility" id="btnHeaderNotifs" title="Expiry Notifications">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
             <span class="notif-unread-dot" id="headerNotifBadge"></span>
+          </button>
+
+          <!-- Header Logout Button -->
+          <button type="button" class="icon-btn-utility btn-logout-icon" id="btnHeaderLogout" title="Log out">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
           </button>
 
           <!-- Primary Header Action -->
           <button type="button" class="btn-header-cta" id="btnQuickIntake" title="Add Product">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span>Add Product</span>
+            <span>+ Add Product</span>
           </button>
         </div>
       </header>
@@ -255,17 +328,14 @@
              PAGE 1: DASHBOARD OVERVIEW
              ============================================================== -->
         <section class="page-view-section active" id="viewDashboard">
-
-          <!-- 5-Metric Executive KPI Tiles (Responsive Grid) -->
+          
+          <!-- 5-Metric Executive KPI Tiles -->
           <div class="dashboard-kpi-row">
             <div class="kpi-tile-card" onclick="switchView('viewPantry')">
               <div class="kpi-tile-header">
                 <span class="kpi-tile-label">Total Stock Items</span>
                 <div class="kpi-icon-pill green">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                  </svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                 </div>
               </div>
               <div class="kpi-tile-value" id="kpiDashTotalStock">1,248</div>
@@ -276,10 +346,7 @@
               <div class="kpi-tile-header">
                 <span class="kpi-tile-label">Expiring Soon (&lt; 4d)</span>
                 <div class="kpi-icon-pill amber">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
               </div>
               <div class="kpi-tile-value" style="color:var(--status-expiring);" id="kpiDashExpiring">24</div>
@@ -290,11 +357,7 @@
               <div class="kpi-tile-header">
                 <span class="kpi-tile-label">Expired Products</span>
                 <div class="kpi-icon-pill red">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 </div>
               </div>
               <div class="kpi-tile-value" style="color:var(--status-expired);" id="kpiDashExpired">7</div>
@@ -305,10 +368,7 @@
               <div class="kpi-tile-header">
                 <span class="kpi-tile-label">Loss Prevented</span>
                 <div class="kpi-icon-pill blue">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="1" x2="12" y2="23" />
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </div>
               </div>
               <div class="kpi-tile-value" id="kpiDashSaved">₹6,450</div>
@@ -319,10 +379,7 @@
               <div class="kpi-tile-header">
                 <span class="kpi-tile-label">Surplus Donated</span>
                 <div class="kpi-icon-pill purple">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path
-                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 </div>
               </div>
               <div class="kpi-tile-value" id="kpiDashDonated">18</div>
@@ -330,7 +387,7 @@
             </div>
           </div>
 
-          <!-- Main Split: Revenue Hero + Urgent Spoilage Action Center -->
+          <!-- Main Split: Revenue Hero + Urgent Action Center -->
           <div class="dashboard-main-split">
             <!-- Left: Hero Sales & Revenue Card -->
             <div class="sales-card-gradient">
@@ -355,14 +412,12 @@
               <svg class="sparkline-svg-desktop" viewBox="0 0 500 80" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="deskSparkGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3" />
-                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0" />
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
                   </linearGradient>
                 </defs>
-                <path id="deskSparkArea" d="M0,60 Q80,65 140,40 T280,32 T400,16 L500,10 L500,80 L0,80 Z"
-                  fill="url(#deskSparkGrad)" />
-                <path id="deskSparkLine" d="M0,60 Q80,65 140,40 T280,32 T400,16 L500,10" fill="none" stroke="#FFFFFF"
-                  stroke-width="3.5" stroke-linecap="round" />
+                <path id="deskSparkArea" d="M0,60 Q80,65 140,40 T280,32 T400,16 L500,10 L500,80 L0,80 Z" fill="url(#deskSparkGrad)"/>
+                <path id="deskSparkLine" d="M0,60 Q80,65 140,40 T280,32 T400,16 L500,10" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
               </svg>
             </div>
 
@@ -379,22 +434,18 @@
               <div class="urgent-alert-box">
                 <div class="urgent-alert-header">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path
-                      d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
                   </svg>
                   <span>3 Dairy items expire in &lt; 48 hours</span>
                 </div>
                 <p class="urgent-alert-desc">
-                  Amul Toned Milk and Fresh Paneer are nearing their expiration dates. Apply a 25% clearance discount or
-                  schedule community donation before waste occurs.
+                  Amul Toned Milk and Fresh Paneer are nearing their expiration dates. Apply a 25% clearance discount or schedule community donation before waste occurs.
                 </p>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  <button type="button" class="btn-urgent-action" onclick="openDiscountModal('prod-2')">Apply 25%
-                    Clearance</button>
-                  <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;"
-                    onclick="openDonationModal('prod-2')">Donate</button>
+                  <button type="button" class="btn-urgent-action" onclick="openDiscountModal('prod-2')">Apply 25% Clearance</button>
+                  <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;" onclick="openDonationModal('prod-2')">Donate</button>
                 </div>
               </div>
 
@@ -402,10 +453,7 @@
               <div class="quick-tools-desktop-grid">
                 <div class="tool-tile" onclick="switchView('viewStorage')">
                   <div class="tool-tile-icon" style="background:#ECFDF5; color:#10B981;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" />
-                      <path d="M12 6v6l4 2" />
-                    </svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
                   </div>
                   <div>
                     <h4 style="font-size:13px; font-weight:700;">Storage Guides</h4>
@@ -415,11 +463,7 @@
 
                 <div class="tool-tile" onclick="switchView('viewIntake')">
                   <div class="tool-tile-icon" style="background:#FEF3C7; color:#D97706;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="4" y1="4" x2="20" y2="4" />
-                      <line x1="4" y1="20" x2="20" y2="20" />
-                      <rect x="8" y="8" width="8" height="8" />
-                    </svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="4" x2="20" y2="4"/><line x1="4" y1="20" x2="20" y2="20"/><rect x="8" y="8" width="8" height="8"/></svg>
                   </div>
                   <div>
                     <h4 style="font-size:13px; font-weight:700;">Barcode Intake</h4>
@@ -440,8 +484,7 @@
                   <h3>Shopping & Low Stock Checklist</h3>
                   <p>Items reaching minimum safety stock</p>
                 </div>
-                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;"
-                  onclick="promptAddShoppingItem()">+ Add Item</button>
+                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;" onclick="promptAddShoppingItem()">+ Add Item</button>
               </div>
 
               <div id="desktopShoppingListContainer">
@@ -456,8 +499,7 @@
                   <h3>Inventory Category Breakdown</h3>
                   <p>Stock allocation by department</p>
                 </div>
-                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;"
-                  onclick="switchView('viewAnalytics')">View Report</button>
+                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;" onclick="switchView('viewAnalytics')">View Report</button>
               </div>
 
               <div style="display:flex; flex-direction:column; gap:12px;" id="dashCategoryBars">
@@ -473,7 +515,7 @@
              ============================================================== -->
         <section class="page-view-section" id="viewPantry">
           <div class="panel-card">
-
+            
             <!-- Table Toolbar (Search, Filters, Sort) -->
             <div class="table-toolbar-row">
               <div class="table-filter-group" id="desktopCategoryFilters">
@@ -487,17 +529,14 @@
               </div>
 
               <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <label style="font-size:12px; font-weight:600; color:var(--text-muted);"
-                  for="desktopSortSelect">Sort:</label>
-                <select id="desktopSortSelect" class="form-field-input"
-                  style="width:180px; padding:6px 10px; font-size:12px;">
+                <label style="font-size:12px; font-weight:600; color:var(--text-muted);" for="desktopSortSelect">Sort:</label>
+                <select id="desktopSortSelect" class="form-field-input" style="width:180px; padding:6px 10px; font-size:12px;">
                   <option value="fifo">Expiry Date (FIFO Earliest)</option>
                   <option value="name">Product Name (A-Z)</option>
                   <option value="stock-low">Stock Units (Lowest First)</option>
                   <option value="price-high">Price (High to Low)</option>
                 </select>
-                <button type="button" class="btn-primary-action" style="padding:7px 14px; font-size:12.5px;"
-                  onclick="switchView('viewIntake')">+ Add Item</button>
+                <button type="button" class="btn-primary-action" style="padding:7px 14px; font-size:12.5px;" onclick="switchView('viewIntake')">+ Add Item</button>
               </div>
             </div>
 
@@ -542,20 +581,15 @@
 
               <!-- Camera Viewfinder -->
               <div class="scanner-viewfinder-desktop" id="desktopViewfinder">
-                <video id="desktopWebcamVideo" style="width:100%; height:100%; object-fit:cover; display:none;"
-                  playsinline autoplay muted></video>
-                <div id="desktopSimBg"
-                  style="position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80') center/cover; opacity:0.35;">
-                </div>
-
+                <video id="desktopWebcamVideo" style="width:100%; height:100%; object-fit:cover; display:none;" playsinline autoplay muted></video>
+                <div id="desktopSimBg" style="position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80') center/cover; opacity:0.35;"></div>
+                
                 <div class="scanner-reticle-desktop">
                   <div class="laser-beam"></div>
                 </div>
 
                 <div style="position:absolute; bottom:12px; display:flex; gap:10px;">
-                  <button type="button" class="btn-secondary-action"
-                    style="padding:6px 14px; font-size:12px; background:rgba(0,0,0,0.7); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
-                    id="btnToggleDesktopCamera">
+                  <button type="button" class="btn-secondary-action" style="padding:6px 14px; font-size:12px; background:rgba(0,0,0,0.7); color:#FFFFFF; border-color:rgba(255,255,255,0.3);" id="btnToggleDesktopCamera">
                     📷 Start Webcam
                   </button>
                 </div>
@@ -563,39 +597,24 @@
 
               <!-- 1-Click Test Barcode Presets -->
               <div>
-                <span
-                  style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">1-Click
-                  Barcode Test Simulation</span>
-                <div
-                  style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-top:8px;">
-                  <button type="button" class="btn-secondary-action"
-                    style="padding:8px; font-size:12px; justify-content:flex-start;"
-                    onclick="simulateBarcodeScan('8901262010153')">
+                <span style="font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">1-Click Barcode Test Simulation</span>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-top:8px;">
+                  <button type="button" class="btn-secondary-action" style="padding:8px; font-size:12px; justify-content:flex-start;" onclick="simulateBarcodeScan('8901262010153')">
                     🥛 Amul Milk
                   </button>
-                  <button type="button" class="btn-secondary-action"
-                    style="padding:8px; font-size:12px; justify-content:flex-start;"
-                    onclick="simulateBarcodeScan('8902081014799')">
+                  <button type="button" class="btn-secondary-action" style="padding:8px; font-size:12px; justify-content:flex-start;" onclick="simulateBarcodeScan('8902081014799')">
                     🥭 Mango Drink
                   </button>
-                  <button type="button" class="btn-secondary-action"
-                    style="padding:8px; font-size:12px; justify-content:flex-start;"
-                    onclick="simulateBarcodeScan('8901725181204')">
+                  <button type="button" class="btn-secondary-action" style="padding:8px; font-size:12px; justify-content:flex-start;" onclick="simulateBarcodeScan('8901725181204')">
                     🍞 Brown Bread
                   </button>
-                  <button type="button" class="btn-secondary-action"
-                    style="padding:8px; font-size:12px; justify-content:flex-start;"
-                    onclick="simulateBarcodeScan('8901262014427')">
+                  <button type="button" class="btn-secondary-action" style="padding:8px; font-size:12px; justify-content:flex-start;" onclick="simulateBarcodeScan('8901262014427')">
                     🥣 Vanilla Yogurt
                   </button>
-                  <button type="button" class="btn-secondary-action"
-                    style="padding:8px; font-size:12px; justify-content:flex-start;"
-                    onclick="simulateBarcodeScan('8906001239912')">
+                  <button type="button" class="btn-secondary-action" style="padding:8px; font-size:12px; justify-content:flex-start;" onclick="simulateBarcodeScan('8906001239912')">
                     🥚 Brown Eggs
                   </button>
-                  <button type="button" class="btn-secondary-action"
-                    style="padding:8px; font-size:12px; justify-content:flex-start;"
-                    onclick="simulateBarcodeScan('8901058852217')">
+                  <button type="button" class="btn-secondary-action" style="padding:8px; font-size:12px; justify-content:flex-start;" onclick="simulateBarcodeScan('8901058852217')">
                     🍜 Maggi Noodles
                   </button>
                 </div>
@@ -613,8 +632,7 @@
                 <div class="intake-form-grid">
                   <div class="form-field-group form-full-width">
                     <label class="form-field-label" for="intakeName">Product Name *</label>
-                    <input type="text" id="intakeName" class="form-field-input" placeholder="e.g. Amul Toned Milk 500ml"
-                      required>
+                    <input type="text" id="intakeName" class="form-field-input" placeholder="e.g. Amul Toned Milk 500ml" required>
                   </div>
 
                   <div class="form-field-group">
@@ -637,8 +655,7 @@
 
                   <div class="form-field-group">
                     <label class="form-field-label" for="intakePrice">Unit Price (₹) *</label>
-                    <input type="number" id="intakePrice" class="form-field-input" placeholder="25.00" min="0"
-                      step="0.5" required>
+                    <input type="number" id="intakePrice" class="form-field-input" placeholder="25.00" min="0" step="0.5" required>
                   </div>
 
                   <div class="form-field-group">
@@ -657,30 +674,25 @@
                   </div>
 
                   <!-- Real-time Shelf Life Calculation & Validation -->
-                  <div class="form-full-width"
-                    style="background:var(--primary-light); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--primary-border);">
-                    <span style="font-size:12.5px; font-weight:700; color:var(--primary-dark);"
-                      id="intakeShelfLifeFeedback">
+                  <div class="form-full-width" style="background:var(--primary-light); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--primary-border);">
+                    <span style="font-size:12.5px; font-weight:700; color:var(--primary-dark);" id="intakeShelfLifeFeedback">
                       Estimated Shelf Life: Please specify an expiry date.
                     </span>
                   </div>
 
                   <div class="form-field-group">
                     <label class="form-field-label" for="intakeSupplier">Supplier / Distributor</label>
-                    <input type="text" id="intakeSupplier" class="form-field-input"
-                      placeholder="e.g. Sunrise Wholesale">
+                    <input type="text" id="intakeSupplier" class="form-field-input" placeholder="e.g. Sunrise Wholesale">
                   </div>
 
                   <div class="form-field-group">
                     <label class="form-field-label" for="intakeLocation">Storage Location / Rack</label>
-                    <input type="text" id="intakeLocation" class="form-field-input"
-                      placeholder="e.g. Chiller Bay 1 / Aisle 2">
+                    <input type="text" id="intakeLocation" class="form-field-input" placeholder="e.g. Chiller Bay 1 / Aisle 2">
                   </div>
 
                   <div class="form-field-group form-full-width">
                     <label class="form-field-label" for="intakeStorageNotes">Storage Recommendations</label>
-                    <textarea id="intakeStorageNotes" class="form-field-input" rows="2"
-                      placeholder="e.g. Keep continuously refrigerated between 2°C and 4°C."></textarea>
+                    <textarea id="intakeStorageNotes" class="form-field-input" rows="2" placeholder="e.g. Keep continuously refrigerated between 2°C and 4°C."></textarea>
                   </div>
                 </div>
 
@@ -765,7 +777,7 @@
              ============================================================== -->
         <section class="page-view-section" id="viewAnalytics">
           <div class="dashboard-secondary-split" style="margin-bottom:20px;">
-
+            
             <!-- Donut Chart Box -->
             <div class="panel-card">
               <div class="panel-header-row">
@@ -773,36 +785,26 @@
                   <h3>Monthly Food Inventory Breakdown</h3>
                   <p>Departmental distribution of stock</p>
                 </div>
-                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;"
-                  onclick="exportInventoryData()">Export CSV</button>
+                <button type="button" class="btn-secondary-action" style="padding:6px 12px; font-size:12px;" onclick="exportInventoryData()">Export CSV</button>
               </div>
 
-              <div
-                style="display:flex; align-items:center; justify-content:space-around; gap:16px; padding:16px 0; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; justify-content:space-around; gap:16px; padding:16px 0; flex-wrap:wrap;">
                 <div style="position:relative; width:150px; height:150px;">
                   <svg viewBox="0 0 42 42" style="transform:rotate(-90deg); width:100%; height:100%;">
-                    <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--bg-subtle)"
-                      stroke-width="5" />
-                    <circle id="deskDonutDairy" cx="21" cy="21" r="15.91549430918954" fill="transparent"
-                      stroke="#10B981" stroke-width="5" stroke-dasharray="34 66" stroke-dashoffset="0" />
-                    <circle id="deskDonutBakery" cx="21" cy="21" r="15.91549430918954" fill="transparent"
-                      stroke="#3B82F6" stroke-width="5" stroke-dasharray="28 72" stroke-dashoffset="-34" />
-                    <circle id="deskDonutBeverages" cx="21" cy="21" r="15.91549430918954" fill="transparent"
-                      stroke="#F59E0B" stroke-width="5" stroke-dasharray="18 82" stroke-dashoffset="-62" />
-                    <circle id="deskDonutSnacks" cx="21" cy="21" r="15.91549430918954" fill="transparent"
-                      stroke="#8B5CF6" stroke-width="5" stroke-dasharray="10 90" stroke-dashoffset="-80" />
-                    <circle id="deskDonutFrozen" cx="21" cy="21" r="15.91549430918954" fill="transparent"
-                      stroke="#06B6D4" stroke-width="5" stroke-dasharray="10 90" stroke-dashoffset="-90" />
+                    <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--bg-subtle)" stroke-width="5"/>
+                    <circle id="deskDonutDairy" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#10B981" stroke-width="5" stroke-dasharray="34 66" stroke-dashoffset="0"/>
+                    <circle id="deskDonutBakery" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#3B82F6" stroke-width="5" stroke-dasharray="28 72" stroke-dashoffset="-34"/>
+                    <circle id="deskDonutBeverages" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#F59E0B" stroke-width="5" stroke-dasharray="18 82" stroke-dashoffset="-62"/>
+                    <circle id="deskDonutSnacks" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#8B5CF6" stroke-width="5" stroke-dasharray="10 90" stroke-dashoffset="-80"/>
+                    <circle id="deskDonutFrozen" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#06B6D4" stroke-width="5" stroke-dasharray="10 90" stroke-dashoffset="-90"/>
                   </svg>
-                  <div
-                    style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                  <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                     <span style="font-size:20px; font-weight:800; color:var(--text-main);">1,248</span>
                     <span style="font-size:9.5px; color:var(--text-muted); text-transform:uppercase;">Items</span>
                   </div>
                 </div>
 
-                <div style="display:flex; flex-direction:column; gap:8px; flex:1; min-width:180px;"
-                  id="analyticsLegendContainer">
+                <div style="display:flex; flex-direction:column; gap:8px; flex:1; min-width:180px;" id="analyticsLegendContainer">
                   <!-- Dynamic legend -->
                 </div>
               </div>
@@ -851,7 +853,7 @@
           <div class="panel-card" style="max-width:800px;">
             <div class="panel-title-block" style="margin-bottom:18px;">
               <h3>Store Settings & Configuration</h3>
-              <p>Configure notification thresholds, store profile, and data management</p>
+              <p>Configure notification thresholds, store profile, and session management</p>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:18px;">
@@ -863,8 +865,7 @@
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                   <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(1)">1 Day</button>
                   <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(2)">2 Days</button>
-                  <button type="button" class="filter-btn-pill active" onclick="setSettingThreshold(4)">4 Days
-                    (Recommended)</button>
+                  <button type="button" class="filter-btn-pill active" onclick="setSettingThreshold(4)">4 Days (Recommended)</button>
                   <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(7)">7 Days</button>
                 </div>
               </div>
@@ -872,21 +873,32 @@
               <div class="form-field-group">
                 <label class="form-field-label">Store Profile Information</label>
                 <input type="text" class="form-field-input" value="Green Basket Supermarket" style="margin-bottom:8px;">
-                <input type="text" class="form-field-input" value="CP2 - Anand Campus, Gujarat"
-                  style="margin-bottom:8px;">
-                <input type="text" class="form-field-input"
-                  value="Team SHE Innovates (Prakruti, Priya, Pushti, Richa, Richi)">
+                <input type="text" class="form-field-input" value="CP2 - Anand Campus, Gujarat" style="margin-bottom:8px;">
+                <input type="text" class="form-field-input" value="Team SHE Innovates (Prakruti, Priya, Pushti, Richa, Richi)">
               </div>
 
-              <div
-                style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <!-- Session & Logout -->
+              <div style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div>
+                  <h4 style="font-size:13.5px; font-weight:700;">Account Session</h4>
+                  <p style="font-size:11.5px; color:var(--text-muted);">Currently signed in as Green Basket Supermarket Manager</p>
+                </div>
+                <button type="button" class="btn-secondary-action" id="btnSettingsLogout" style="color:var(--status-expired); border-color:var(--status-expired-border);">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                  <span>Log out of Session</span>
+                </button>
+              </div>
+
+              <div style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                   <h4 style="font-size:13.5px; font-weight:700;">Reset to Default Sample Data</h4>
-                  <p style="font-size:11.5px; color:var(--text-muted);">Restore original Product Ideation sample items
-                  </p>
+                  <p style="font-size:11.5px; color:var(--text-muted);">Restore original Product Ideation sample items</p>
                 </div>
-                <button type="button" class="btn-secondary-action" onclick="resetSampleData()">Reset Sample
-                  Data</button>
+                <button type="button" class="btn-secondary-action" onclick="resetSampleData()">Reset Sample Data</button>
               </div>
             </div>
           </div>
@@ -904,21 +916,16 @@
     <div class="desktop-modal-window">
       <div class="modal-header-strip">
         <h3>Product Details & FIFO Tracking</h3>
-        <button type="button" class="btn-table-action"
-          onclick="closeDesktopModal('desktopProductDetailModal')">✕</button>
+        <button type="button" class="btn-table-action" onclick="closeDesktopModal('desktopProductDetailModal')">✕</button>
       </div>
 
       <div class="modal-body-scroll">
-        <div
-          style="display:flex; align-items:center; gap:16px; background:var(--bg-subtle); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--border-light); flex-wrap:wrap;">
-          <div
-            style="width:64px; height:64px; background:#FFFFFF; border-radius:var(--radius-xs); border:1px solid var(--border-light); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
-            <img id="deskModalProductImg" src="assets/mango-drink.svg" alt="Product"
-              style="width:100%; height:100%; object-fit:contain; padding:4px;">
+        <div style="display:flex; align-items:center; gap:16px; background:var(--bg-subtle); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--border-light); flex-wrap:wrap;">
+          <div style="width:64px; height:64px; background:#FFFFFF; border-radius:var(--radius-xs); border:1px solid var(--border-light); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+            <img id="deskModalProductImg" src="assets/mango-drink.svg" alt="Product" style="width:100%; height:100%; object-fit:contain; padding:4px;">
           </div>
           <div>
-            <h3 id="deskModalProductName" style="font-size:17px; font-weight:800; color:var(--text-main);">Mango Drink
-              500ml</h3>
+            <h3 id="deskModalProductName" style="font-size:17px; font-weight:800; color:var(--text-main);">Mango Drink 500ml</h3>
             <div style="display:flex; align-items:center; gap:8px; margin-top:4px; flex-wrap:wrap;">
               <span class="status-badge-table count" id="deskModalCategory">BEVERAGES</span>
               <span class="status-badge-table expired" id="deskModalStatusBadge">Expired</span>
@@ -942,31 +949,26 @@
         </div>
 
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
-          <div
-            style="background:var(--bg-subtle); padding:10px 12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
+          <div style="background:var(--bg-subtle); padding:10px 12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
             <span style="font-size:11px; color:var(--text-muted); display:block;">Manufacturing Date</span>
             <strong style="font-size:13px;" id="deskModalMfg">01 Mar 2026</strong>
           </div>
-          <div
-            style="background:var(--bg-subtle); padding:10px 12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
+          <div style="background:var(--bg-subtle); padding:10px 12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
             <span style="font-size:11px; color:var(--text-muted); display:block;">Expiry Date</span>
             <strong style="font-size:13px;" id="deskModalExp">12 Nov 2026</strong>
           </div>
-          <div
-            style="background:var(--bg-subtle); padding:10px 12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
+          <div style="background:var(--bg-subtle); padding:10px 12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
             <span style="font-size:11px; color:var(--text-muted); display:block;">Barcode</span>
             <strong style="font-size:13px;" id="deskModalBarcode">8902081014799</strong>
           </div>
-          <div
-            style="background:var(--bg-subtle); padding:10px 12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
+          <div style="background:var(--bg-subtle); padding:10px 12px; border-radius:var(--radius-xs); border:1px solid var(--border-light);">
             <span style="font-size:11px; color:var(--text-muted); display:block;">Supplier</span>
             <strong style="font-size:13px;" id="deskModalSupplier">Sunrise Wholesale</strong>
           </div>
         </div>
 
         <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:12px; border-radius:var(--radius-sm);">
-          <strong style="font-size:12px; color:#166534; display:block; margin-bottom:2px;">Optimal Storage
-            Recommendation:</strong>
+          <strong style="font-size:12px; color:#166534; display:block; margin-bottom:2px;">Optimal Storage Recommendation:</strong>
           <p style="font-size:12px; color:#14532D; line-height:1.4;" id="deskModalStorage">
             Store in cool, dry place away from direct sunlight. Refrigerate after opening and consume within 3 days.
           </p>
@@ -974,10 +976,8 @@
       </div>
 
       <div class="modal-footer-strip">
-        <button type="button" class="btn-secondary-action" id="btnModalDelete"
-          style="color:var(--status-expired); border-color:var(--status-expired-border);">Remove Stock</button>
-        <button type="button" class="btn-secondary-action" id="btnModalDiscount"
-          style="color:#B45309; border-color:#FCD34D;">Apply Discount</button>
+        <button type="button" class="btn-secondary-action" id="btnModalDelete" style="color:var(--status-expired); border-color:var(--status-expired-border);">Remove Stock</button>
+        <button type="button" class="btn-secondary-action" id="btnModalDiscount" style="color:#B45309; border-color:#FCD34D;">Apply Discount</button>
         <button type="button" class="btn-primary-action" id="btnModalMarkSold">Mark as Sold (FIFO)</button>
       </div>
     </div>
@@ -994,11 +994,9 @@
       </div>
 
       <div class="modal-body-scroll">
-        <div
-          style="background:var(--bg-subtle); padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+        <div style="background:var(--bg-subtle); padding:12px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
           <h4 id="deskDiscountItemName" style="font-size:14.5px; font-weight:700;">Amul Toned Milk</h4>
-          <span style="font-size:12.5px; color:var(--text-muted);" id="deskDiscountOriginalPrice">Original:
-            ₹27.00</span>
+          <span style="font-size:12.5px; color:var(--text-muted);" id="deskDiscountOriginalPrice">Original: ₹27.00</span>
         </div>
 
         <div style="display:flex; gap:6px; flex-wrap:wrap;">
@@ -1013,16 +1011,14 @@
           <input type="number" id="deskCustomDiscountInput" class="form-field-input" min="5" max="90" value="25">
         </div>
 
-        <div
-          style="display:flex; justify-content:space-between; align-items:center; background:#ECFDF5; padding:12px; border-radius:var(--radius-sm); border:1px solid #A7F3D0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#ECFDF5; padding:12px; border-radius:var(--radius-sm); border:1px solid #A7F3D0;">
           <span style="font-weight:700; color:#065F46;">New Clearance Price:</span>
           <span style="font-size:20px; font-weight:800; color:#059669;" id="deskDiscountPreviewPrice">₹20.25</span>
         </div>
       </div>
 
       <div class="modal-footer-strip">
-        <button type="button" class="btn-secondary-action"
-          onclick="closeDesktopModal('desktopDiscountModal')">Cancel</button>
+        <button type="button" class="btn-secondary-action" onclick="closeDesktopModal('desktopDiscountModal')">Cancel</button>
         <button type="button" class="btn-primary-action" id="btnConfirmDeskDiscount">Apply Discount</button>
       </div>
     </div>
@@ -1048,8 +1044,7 @@
       </div>
 
       <div class="modal-footer-strip">
-        <button type="button" class="btn-secondary-action"
-          onclick="closeDesktopModal('desktopDonationModal')">Cancel</button>
+        <button type="button" class="btn-secondary-action" onclick="closeDesktopModal('desktopDonationModal')">Cancel</button>
         <button type="button" class="btn-primary-action" id="btnConfirmDeskDonation">Schedule Pickup</button>
       </div>
     </div>
@@ -1061,7 +1056,7 @@
   <div class="desktop-undo-toast" id="desktopUndoToast">
     <div class="toast-message-text">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5">
-        <polyline points="20 6 9 17 4 12" />
+        <polyline points="20 6 9 17 4 12"/>
       </svg>
       <span id="desktopToastMsg">Item updated successfully.</span>
     </div>
@@ -1072,5 +1067,4 @@
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
 </body>
-
 </html>

@@ -293,6 +293,30 @@ const BARCODE_CATALOG = {
     supplier: "Safal Frozen Foods",
     shelfLifeDays: 365,
     storageTips: "Maintain strictly at -18°C."
+  },
+  "8901030382343": {
+    name: "Kissan Fresh Tomato Ketchup 950g",
+    category: "Pantry",
+    price: 135.00,
+    supplier: "Hindustan Unilever Ltd",
+    shelfLifeDays: 270,
+    storageTips: "Store in cool dry place. Refrigerate after opening to preserve freshness."
+  },
+  "8901058852330": {
+    name: "Maggi Rich Tomato Ketchup 500g",
+    category: "Pantry",
+    price: 85.00,
+    supplier: "Nestle India Ltd",
+    shelfLifeDays: 270,
+    storageTips: "Keep bottle tightly closed and refrigerate after opening."
+  },
+  "8901058852446": {
+    name: "Heinz Classic Tomato Ketchup 400g",
+    category: "Pantry",
+    price: 99.00,
+    supplier: "Kraft Heinz India",
+    shelfLifeDays: 365,
+    storageTips: "Store at room temp; refrigerate after opening."
   }
 };
 

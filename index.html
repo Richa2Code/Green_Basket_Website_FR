@@ -640,15 +640,38 @@
                   style="position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80') center/cover; opacity:0.35;">
                 </div>
 
-                <div class="scanner-reticle-desktop">
+                <!-- Top Status Badge Overlay -->
+                <div class="scanner-status-overlay" id="scannerStatusBadge">
+                  🎯 Align barcode inside reticle
+                </div>
+
+                <!-- Protocol Warning Note for file:// -->
+                <div id="cameraProtocolNote"
+                  style="display:none; position:absolute; top:46px; left:12px; right:12px; background:rgba(15,23,42,0.92); border:1px solid #F59E0B; padding:8px 12px; border-radius:6px; font-size:11px; color:#FEF3C7; text-align:center; z-index:15; line-height:1.4;">
+                  ⚠️ <strong>Browser Security Note:</strong> Direct physical camera streaming requires <code>localhost</code> (e.g. <code>python -m http.server 8080</code>). When opening via local <code>file:///</code>, use <strong>Upload Barcode Photo</strong> or the <strong>1-Click Presets</strong> below!
+                </div>
+
+                <div class="scanner-reticle-desktop" id="scannerReticle">
                   <div class="laser-beam"></div>
                 </div>
 
-                <div style="position:absolute; bottom:12px; display:flex; gap:10px;">
+                <!-- Scanner Controls Bottom Strip -->
+                <div style="position:absolute; bottom:12px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding:0 8px; z-index:20;">
                   <button type="button" class="btn-secondary-action"
-                    style="padding:6px 14px; font-size:12px; background:rgba(0,0,0,0.7); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
+                    style="padding:6px 12px; font-size:11.5px; background:rgba(0,0,0,0.75); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
                     id="btnToggleDesktopCamera">
                     📷 Start Webcam
+                  </button>
+                  <input type="file" id="barcodeImageUpload" accept="image/*" style="display:none;">
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:6px 12px; font-size:11.5px; background:rgba(0,0,0,0.75); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
+                    id="btnTriggerUpload">
+                    📁 Upload Photo
+                  </button>
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:6px 14px; font-size:11.5px; background:#10B981; color:#FFFFFF; border:none; font-weight:700;"
+                    id="btnQuickViewfinderScan">
+                    ⚡ Quick Scan
                   </button>
                 </div>
               </div>
@@ -690,6 +713,11 @@
                     onclick="simulateBarcodeScan('8901058852217')">
                     🍜 Maggi Noodles
                   </button>
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:8px; font-size:12px; justify-content:flex-start;"
+                    onclick="simulateBarcodeScan('8901030382343')">
+                    🍅 Kissan Ketchup
+                  </button>
                 </div>
               </div>
             </div>
@@ -724,7 +752,13 @@
 
                   <div class="form-field-group">
                     <label class="form-field-label" for="intakeBarcode">Barcode / SKU Number</label>
-                    <input type="text" id="intakeBarcode" class="form-field-input" placeholder="8901262010153">
+                    <div style="display:flex; gap:6px;">
+                      <input type="text" id="intakeBarcode" class="form-field-input" placeholder="e.g. 8901030382343">
+                      <button type="button" class="btn-primary-action" id="btnLookupBarcode" style="padding:7px 12px; font-size:12px; white-space:nowrap;">
+                        🔍 Check
+                      </button>
+                    </div>
+                    <span id="barcodeLookupStatus" style="font-size:11.5px; color:var(--text-muted); margin-top:2px; min-height:16px;"></span>
                   </div>
 
                   <div class="form-field-group">

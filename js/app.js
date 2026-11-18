@@ -67,7 +67,59 @@ document.addEventListener("DOMContentLoaded", () => {
   renderAllViews();
 });
 
+function getCustomBarcodeCatalog() {
+  try {
+    return JSON.parse(localStorage.getItem("pi_custom_barcodes") || "{}");
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveCustomBarcode(code, data) {
+  if (!code || !data) return;
+  const custom = getCustomBarcodeCatalog();
+  custom[code] = data;
+  localStorage.setItem("pi_custom_barcodes", JSON.stringify(custom));
+  if (typeof BARCODE_CATALOG !== "undefined") {
+    BARCODE_CATALOG[code] = data;
+  }
+}
+
+function lookupBarcode(barcode) {
+  if (!barcode) return null;
+  // 1. Check in-memory/pre-defined catalog
+  if (typeof BARCODE_CATALOG !== "undefined" && BARCODE_CATALOG[barcode]) {
+    return BARCODE_CATALOG[barcode];
+  }
+  // 2. Check dynamically learned barcodes from localStorage
+  const custom = getCustomBarcodeCatalog();
+  if (custom[barcode]) {
+    return custom[barcode];
+  }
+  // 3. Check existing store inventory
+  if (AppState && AppState.inventory) {
+    const found = AppState.inventory.find(i => i.barcode === barcode);
+    if (found) {
+      return {
+        name: found.name,
+        category: found.category,
+        price: found.price,
+        supplier: found.supplier,
+        shelfLifeDays: 30,
+        storageTips: found.storageTips || "Store under standard conditions."
+      };
+    }
+  }
+  return null;
+}
+
 function loadData() {
+  // Load any previously saved custom barcodes into the catalog
+  const customBarcodes = getCustomBarcodeCatalog();
+  if (typeof BARCODE_CATALOG !== "undefined") {
+    Object.assign(BARCODE_CATALOG, customBarcodes);
+  }
+
   const savedInv = localStorage.getItem("pi_desk_inventory");
   if (savedInv) {
     try { AppState.inventory = JSON.parse(savedInv); }
@@ -605,12 +657,85 @@ function renderPantryTable() {
 // ==========================================================================
 // Stock Intake & Barcode Simulation
 // ==========================================================================
+let quickScanIndex = 0;
+let barcodeDetectorActive = false;
+
 function setupIntakeForm() {
   const form = document.getElementById("desktopIntakeForm");
   const expInp = document.getElementById("intakeExpiryDate");
   const catInp = document.getElementById("intakeCategory");
+  const barcodeInp = document.getElementById("intakeBarcode");
 
   expInp?.addEventListener("change", updateIntakeShelfLife);
+
+  const processBarcodeField = (code) => {
+    code = (code || "").trim();
+    if (!code) return;
+
+    const match = lookupBarcode(code);
+    const statusEl = document.getElementById("barcodeLookupStatus");
+
+    if (match) {
+      handleScannedBarcode(code);
+      if (statusEl) {
+        statusEl.innerHTML = `✓ Recognized: <strong>${match.name}</strong> (₹${match.price})`;
+        statusEl.style.color = "#059669";
+      }
+    } else {
+      // New unprogrammed barcode!
+      SoundFX.beep(600, 0.1, "triangle");
+      const vf = document.getElementById("desktopViewfinder");
+      const badge = document.getElementById("scannerStatusBadge");
+      if (vf) {
+        vf.classList.add("scan-success-flash");
+        setTimeout(() => vf.classList.remove("scan-success-flash"), 600);
+      }
+      if (badge) {
+        badge.innerHTML = `⚠️ New Barcode: <strong>${code}</strong>`;
+        badge.style.color = "#F59E0B";
+        badge.style.borderColor = "#F59E0B";
+        setTimeout(() => {
+          badge.innerHTML = "🎯 Align barcode inside reticle";
+          badge.style.color = "#38BDF8";
+          badge.style.borderColor = "rgba(56, 189, 248, 0.4)";
+        }, 4000);
+      }
+      if (statusEl) {
+        statusEl.innerHTML = `⚠️ New barcode! Fill in Product Name & Price to register.`;
+        statusEl.style.color = "#D97706";
+      }
+      showToast(`New barcode ${code} detected! Fill in the name & price to register.`);
+      const nameInp = document.getElementById("intakeName");
+      if (nameInp && !nameInp.value.trim()) {
+        nameInp.focus();
+      }
+    }
+  };
+
+  // 1. Auto-lookup when typing/pasting barcode
+  barcodeInp?.addEventListener("input", () => {
+    const code = barcodeInp.value.trim();
+    if (code.length >= 6 && lookupBarcode(code)) {
+      processBarcodeField(code);
+    }
+  });
+
+  // 2. When pressing Enter or tabbing out of barcode box
+  barcodeInp?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      processBarcodeField(barcodeInp.value);
+    }
+  });
+
+  barcodeInp?.addEventListener("change", () => {
+    processBarcodeField(barcodeInp.value);
+  });
+
+  // 3. When clicking "🔍 Check" button
+  document.getElementById("btnLookupBarcode")?.addEventListener("click", () => {
+    processBarcodeField(barcodeInp.value);
+  });
 
   catInp?.addEventListener("change", () => {
     const notes = document.getElementById("intakeStorageNotes");
@@ -621,6 +746,22 @@ function setupIntakeForm() {
       else if (cat === "Beverages") notes.value = "Refrigerate after opening, consume within 3 days.";
       else if (cat === "Frozen") notes.value = "Maintain at -18°C deep freeze.";
       else if (cat === "Pantry") notes.value = "Airtight moisture-free container.";
+    }
+  });
+
+  // Photo upload trigger
+  document.getElementById("btnTriggerUpload")?.addEventListener("click", () => {
+    document.getElementById("barcodeImageUpload")?.click();
+  });
+  document.getElementById("barcodeImageUpload")?.addEventListener("change", handleBarcodeImageUpload);
+
+  // Quick Viewfinder Scan button
+  document.getElementById("btnQuickViewfinderScan")?.addEventListener("click", triggerQuickSampleScan);
+
+  // Click on viewfinder to simulate scan
+  document.getElementById("desktopViewfinder")?.addEventListener("click", (e) => {
+    if (e.target.tagName !== "BUTTON" && e.target.tagName !== "INPUT") {
+      triggerQuickSampleScan();
     }
   });
 
@@ -664,8 +805,21 @@ function setupIntakeForm() {
 
     AppState.inventory.unshift(newItem);
     saveData();
+
+    // Dynamically learn and remember this barcode permanently!
+    if (barcode) {
+      saveCustomBarcode(barcode, {
+        name,
+        category,
+        price,
+        supplier,
+        shelfLifeDays: 30,
+        storageTips: notes || "Store under standard conditions."
+      });
+    }
+
     SoundFX.actionSuccess();
-    showToast(`Registered "${name}" into inventory.`);
+    showToast(`Registered "${name}" into inventory and saved barcode to store database.`);
     resetIntakeForm();
     switchView("viewPantry");
   });
@@ -691,15 +845,38 @@ function updateIntakeShelfLife() {
   }
 }
 
-function simulateBarcodeScan(barcode) {
+// Master Barcode Handler with Visual & Auditory Feedback
+function handleScannedBarcode(barcode) {
   SoundFX.scanSuccess();
-  const match = BARCODE_CATALOG[barcode];
+
+  // Visual scan flash on viewfinder
+  const vf = document.getElementById("desktopViewfinder");
+  const badge = document.getElementById("scannerStatusBadge");
+  if (vf) {
+    vf.classList.add("scan-success-flash");
+    setTimeout(() => vf.classList.remove("scan-success-flash"), 600);
+  }
+
+  // Look up across both pre-defined catalog and newly registered items!
+  const match = lookupBarcode(barcode);
+  if (badge) {
+    badge.innerHTML = `✓ Scanned: <strong>${match ? match.name : barcode}</strong>`;
+    badge.style.color = "var(--primary)";
+    badge.style.borderColor = "var(--primary)";
+    setTimeout(() => {
+      badge.innerHTML = "🎯 Align barcode inside reticle";
+      badge.style.color = "#38BDF8";
+      badge.style.borderColor = "rgba(56, 189, 248, 0.4)";
+    }, 3500);
+  }
 
   if (AppState.activeView !== "viewIntake") {
     switchView("viewIntake");
   }
 
-  document.getElementById("intakeBarcode").value = barcode;
+  const barcodeField = document.getElementById("intakeBarcode");
+  if (barcodeField) barcodeField.value = barcode;
+
   if (match) {
     document.getElementById("intakeName").value = match.name;
     document.getElementById("intakeCategory").value = match.category;
@@ -716,7 +893,144 @@ function simulateBarcodeScan(barcode) {
     document.getElementById("intakeExpiryDate").value = exp.toISOString().split("T")[0];
 
     updateIntakeShelfLife();
-    showToast(`Barcode ${barcode} recognized: ${match.name}`);
+    showToast(`Barcode ${barcode} scanned: ${match.name}`);
+  } else {
+    // Uncataloged item: Keep actual scanned barcode, prompt user for name
+    const nameInput = document.getElementById("intakeName");
+    if (nameInput) {
+      nameInput.value = "";
+      nameInput.placeholder = "Enter product name (e.g. Tomato Ketchup)";
+      nameInput.focus();
+    }
+    document.getElementById("intakeCategory").value = "Pantry";
+    document.getElementById("intakePrice").value = "";
+    document.getElementById("intakeStock").value = "10";
+    const today = new Date();
+    document.getElementById("intakeMfgDate").value = today.toISOString().split("T")[0];
+    const exp = new Date();
+    exp.setDate(today.getDate() + 30);
+    document.getElementById("intakeExpiryDate").value = exp.toISOString().split("T")[0];
+    updateIntakeShelfLife();
+    showToast(`Barcode ${barcode} read successfully! Please enter product name & price.`);
+  }
+}
+
+// 1-Click test presets call this
+function simulateBarcodeScan(barcode) {
+  handleScannedBarcode(barcode);
+}
+
+// Quick Sample Scan (Cycles through catalog)
+function triggerQuickSampleScan() {
+  const keys = Object.keys(BARCODE_CATALOG);
+  if (keys.length === 0) return;
+  const key = keys[quickScanIndex % keys.length];
+  quickScanIndex++;
+  handleScannedBarcode(key);
+}
+
+// Handle Barcode Image File Upload (Real detection - no fake random mock fallback)
+async function handleBarcodeImageUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const badge = document.getElementById("scannerStatusBadge");
+  if (badge) {
+    badge.innerHTML = "⏳ Decoding barcode from photo...";
+    badge.style.color = "#F59E0B";
+  }
+
+  // Attempt detection via browser BarcodeDetector if available
+  if ('BarcodeDetector' in window) {
+    try {
+      const formats = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'];
+      const detector = new BarcodeDetector({ formats });
+
+      let barcodes = [];
+
+      // Try with ImageBitmap first (cleanest bitmap rendering)
+      try {
+        const bitmap = await createImageBitmap(file);
+        barcodes = await detector.detect(bitmap);
+      } catch (bitmapErr) {
+        // Fallback to HTMLImageElement
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        await img.decode();
+        barcodes = await detector.detect(img);
+      }
+
+      if (barcodes && barcodes.length > 0) {
+        const rawCode = barcodes[0].rawValue;
+        if (rawCode) {
+          handleScannedBarcode(rawCode);
+          event.target.value = "";
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("BarcodeDetector error on uploaded image:", e);
+    }
+  }
+
+  // If the browser detector cannot decode the image, report honestly:
+  event.target.value = "";
+  SoundFX.beep(250, 0.2, "sawtooth");
+
+  if (badge) {
+    badge.innerHTML = "❌ Could not decode barcode from photo";
+    badge.style.color = "var(--status-expired)";
+    setTimeout(() => {
+      badge.innerHTML = "🎯 Align barcode inside reticle";
+      badge.style.color = "#38BDF8";
+    }, 4500);
+  }
+
+  showToast("Could not detect a clear barcode in this photo. Please use a clearer photo, or type the barcode numbers directly.");
+}
+
+// Native Video Frame Detection Loop (Chrome/Edge BarcodeDetector API)
+async function startBarcodeDetection(video) {
+  if (!('BarcodeDetector' in window)) return;
+
+  try {
+    const supported = await BarcodeDetector.getSupportedFormats();
+    const formats = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'].filter(f => supported.includes(f));
+    if (formats.length === 0) return;
+
+    const detector = new BarcodeDetector({ formats });
+    barcodeDetectorActive = true;
+
+    const scanFrame = async () => {
+      if (!AppState.webcamStream || !barcodeDetectorActive) return;
+
+      try {
+        if (video.readyState >= 2) {
+          const results = await detector.detect(video);
+          if (results && results.length > 0) {
+            const rawVal = results[0].rawValue;
+            if (rawVal) {
+              handleScannedBarcode(rawVal);
+              // Pause 1.5s to prevent duplicate rapid trigger
+              setTimeout(() => {
+                if (AppState.webcamStream && barcodeDetectorActive) {
+                  requestAnimationFrame(scanFrame);
+                }
+              }, 1500);
+              return;
+            }
+          }
+        }
+      } catch (err) { }
+
+      if (AppState.webcamStream && barcodeDetectorActive) {
+        requestAnimationFrame(scanFrame);
+      }
+    };
+
+    requestAnimationFrame(scanFrame);
+  } catch (err) {
+    console.warn("BarcodeDetector setup error:", err);
   }
 }
 
@@ -727,36 +1041,65 @@ function resetIntakeForm() {
     fb.textContent = "Estimated Shelf Life: Please specify an expiry date.";
     fb.style.color = "var(--primary-dark)";
   }
+  const statusEl = document.getElementById("barcodeLookupStatus");
+  if (statusEl) statusEl.textContent = "";
 }
 
 async function toggleWebcam() {
   const video = document.getElementById("desktopWebcamVideo");
   const simBg = document.getElementById("desktopSimBg");
   const btn = document.getElementById("btnToggleDesktopCamera");
+  const note = document.getElementById("cameraProtocolNote");
+  const badge = document.getElementById("scannerStatusBadge");
 
   if (AppState.webcamStream) {
     stopWebcamStream();
     if (video) video.style.display = "none";
     if (simBg) simBg.style.display = "block";
     if (btn) btn.textContent = "📷 Start Webcam";
+    if (note) note.style.display = "none";
+    if (badge) {
+      badge.innerHTML = "🎯 Align barcode inside reticle";
+      badge.style.color = "#38BDF8";
+    }
   } else {
+    // Check if browser allows mediaDevices
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      if (note) note.style.display = "block";
+      showToast("Webcam requires localhost or HTTPS. Use 1-Click Presets or Upload Photo.");
+      return;
+    }
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
       AppState.webcamStream = stream;
       if (video) {
         video.srcObject = stream;
         video.style.display = "block";
+        await video.play();
       }
       if (simBg) simBg.style.display = "none";
       if (btn) btn.textContent = "⏹ Stop Webcam";
+      if (note) note.style.display = "none";
+      if (badge) {
+        badge.innerHTML = "🟢 Camera active: Hold barcode to lens";
+        badge.style.color = "#10B981";
+      }
       SoundFX.beep(1000, 0.1);
+
+      // Start continuous barcode reading loop
+      startBarcodeDetection(video);
     } catch (e) {
-      showToast("Webcam unavailable. Use the 1-Click Barcode Test buttons below.");
+      if (note) note.style.display = "block";
+      showToast("Camera access restricted. Use 1-Click test presets or Upload Photo.");
     }
   }
 }
 
 function stopWebcamStream() {
+  barcodeDetectorActive = false;
   if (AppState.webcamStream) {
     AppState.webcamStream.getTracks().forEach(t => t.stop());
     AppState.webcamStream = null;

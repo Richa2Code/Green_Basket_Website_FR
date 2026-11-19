@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSidebarNavigation();
   setupGlobalControls();
   setupIntakeForm();
+  setupSettingsView();
   renderAllViews();
 });
 
@@ -251,6 +252,7 @@ function setupAuthControls() {
   document.getElementById("btnSidebarLogout")?.addEventListener("click", promptLogout);
   document.getElementById("btnHeaderLogout")?.addEventListener("click", promptLogout);
   document.getElementById("btnSettingsLogout")?.addEventListener("click", promptLogout);
+  document.getElementById("btnSettingsProfileLogout")?.addEventListener("click", promptLogout);
 
   // Wire confirm button inside the logout modal
   document.getElementById("btnConfirmLogoutModal")?.addEventListener("click", executeLogout);
@@ -291,6 +293,16 @@ function setupSidebarNavigation() {
       }
     });
   });
+
+  // Profile triggers (sidebar footer profile card & header profile pill)
+  const handleProfileClick = (e) => {
+    e?.preventDefault();
+    switchView("viewSettings");
+    closeMobileSidebar();
+    SoundFX.beep(600, 0.05);
+  };
+  document.getElementById("btnSidebarProfileCard")?.addEventListener("click", handleProfileClick);
+  document.getElementById("btnHeaderProfile")?.addEventListener("click", handleProfileClick);
 }
 
 function switchView(viewId, filterParam = null) {
@@ -322,7 +334,7 @@ function switchView(viewId, filterParam = null) {
       viewDonation: "Community Surplus Food Donation Network",
       viewStorage: "Smart Storage Guides & Food Preservation",
       viewAnalytics: "Reports & Financial Wastage Analytics",
-      viewSettings: "Store Configuration & Settings"
+      viewSettings: "Store Profile & Configuration"
     };
     titleEl.textContent = titles[viewId] || "Inventory Dashboard";
   }
@@ -1661,4 +1673,63 @@ function formatDate(dateStr) {
   } catch (e) {
     return dateStr;
   }
+}
+
+// ==========================================================================
+// Store Profile & Settings Persistence
+// ==========================================================================
+function setupSettingsView() {
+  loadStoreProfile();
+
+  document.getElementById("btnSaveStoreProfile")?.addEventListener("click", () => {
+    saveStoreProfile();
+  });
+}
+
+function loadStoreProfile() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("pi_store_profile") || "null");
+    if (saved) {
+      if (saved.storeName) {
+        const input = document.getElementById("settingStoreName");
+        const heading = document.getElementById("profileDisplayStoreName");
+        if (input) input.value = saved.storeName;
+        if (heading) heading.textContent = saved.storeName;
+      }
+      if (saved.storeLocation) {
+        const input = document.getElementById("settingStoreLocation");
+        if (input) input.value = saved.storeLocation;
+      }
+      if (saved.storeTeam) {
+        const input = document.getElementById("settingStoreTeam");
+        const display = document.getElementById("profileDisplayTeam");
+        if (input) input.value = saved.storeTeam;
+        if (display) display.textContent = saved.storeTeam;
+      }
+      if (saved.storeEmail) {
+        const input = document.getElementById("settingStoreEmail");
+        if (input) input.value = saved.storeEmail;
+      }
+    }
+  } catch (e) {
+    console.error("Error loading store profile:", e);
+  }
+}
+
+function saveStoreProfile() {
+  const storeName = document.getElementById("settingStoreName")?.value.trim() || "Green Basket Supermarket";
+  const storeLocation = document.getElementById("settingStoreLocation")?.value.trim() || "CP2 - Anand Campus, Gujarat";
+  const storeTeam = document.getElementById("settingStoreTeam")?.value.trim() || "Team SHE Innovates";
+  const storeEmail = document.getElementById("settingStoreEmail")?.value.trim() || "manager@greenbasket.com";
+
+  const profile = { storeName, storeLocation, storeTeam, storeEmail, lastUpdated: new Date().toISOString() };
+  localStorage.setItem("pi_store_profile", JSON.stringify(profile));
+
+  const heading = document.getElementById("profileDisplayStoreName");
+  if (heading) heading.textContent = storeName;
+  const display = document.getElementById("profileDisplayTeam");
+  if (display) display.textContent = storeTeam;
+
+  SoundFX.actionSuccess();
+  showToast("Store profile updated & saved to local storage!");
 }

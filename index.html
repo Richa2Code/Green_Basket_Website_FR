@@ -950,25 +950,25 @@
               </div>
 
               <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px;">
-                <div class="kpi-tile-card">
+                <div class="kpi-tile-card" onclick="filterByEfficiencyMetric('reminders')" style="cursor:pointer;" title="Click to view products with automated alerts">
                   <span class="kpi-tile-label">Reminders Sent</span>
-                  <div class="kpi-tile-value" style="color:var(--accent-blue);">12</div>
-                  <span class="kpi-tile-sub">Automated alerts</span>
+                  <div class="kpi-tile-value" id="analyticsRemindersCount" style="color:var(--accent-blue);">12</div>
+                  <span class="kpi-tile-sub">Automated alerts &rarr;</span>
                 </div>
-                <div class="kpi-tile-card">
+                <div class="kpi-tile-card" onclick="filterByEfficiencyMetric('movers')" style="cursor:pointer;" title="Click to view fast-moving FIFO inventory">
                   <span class="kpi-tile-label">Top Movers</span>
-                  <div class="kpi-tile-value" style="color:var(--status-fresh);">8</div>
-                  <span class="kpi-tile-sub">Fastest FIFO</span>
+                  <div class="kpi-tile-value" id="analyticsTopMoversCount" style="color:var(--status-fresh);">8</div>
+                  <span class="kpi-tile-sub">Fastest FIFO &rarr;</span>
                 </div>
-                <div class="kpi-tile-card">
+                <div class="kpi-tile-card" onclick="filterByEfficiencyMetric('slow')" style="cursor:pointer;" title="Click to view slow-selling items nearing expiry">
                   <span class="kpi-tile-label">Slow Sellers</span>
-                  <div class="kpi-tile-value" style="color:var(--status-expiring);">3</div>
-                  <span class="kpi-tile-sub">Needs promotion</span>
+                  <div class="kpi-tile-value" id="analyticsSlowSellersCount" style="color:var(--status-expiring);">3</div>
+                  <span class="kpi-tile-sub">Needs promotion &rarr;</span>
                 </div>
-                <div class="kpi-tile-card">
+                <div class="kpi-tile-card" onclick="filterByEfficiencyMetric('wastage')" style="cursor:pointer;" title="Click to view items at wastage risk needing markdown">
                   <span class="kpi-tile-label">Wastage Risks</span>
-                  <div class="kpi-tile-value" style="color:var(--status-expired);">2</div>
-                  <span class="kpi-tile-sub">Needs markdown</span>
+                  <div class="kpi-tile-value" id="analyticsWastageRiskCount" style="color:var(--status-expired);">2</div>
+                  <span class="kpi-tile-sub">Needs markdown &rarr;</span>
                 </div>
               </div>
             </div>

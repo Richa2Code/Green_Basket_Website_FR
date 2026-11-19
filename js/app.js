@@ -474,7 +474,44 @@ function updateKPIs() {
   document.getElementById("healthBadgeAll").textContent = AppState.inventory.length;
   document.getElementById("healthBadgeExpired").textContent = expiredCount;
   document.getElementById("healthBadgeExpiring").textContent = expiringCount;
-  document.getElementById("healthBadgeFresh").textContent = AppState.inventory.filter(i => i.status === "fresh").length;
+  const freshCount = AppState.inventory.filter(i => i.status === "fresh").length;
+  document.getElementById("healthBadgeFresh").textContent = freshCount;
+
+  // Efficiency & Spoilage Metrics in Analytics
+  const elReminders = document.getElementById("analyticsRemindersCount");
+  if (elReminders) elReminders.textContent = AppState.storeStats.remindersSent || (expiringCount * 2 + 4);
+
+  const elMovers = document.getElementById("analyticsTopMoversCount");
+  if (elMovers) elMovers.textContent = freshCount;
+
+  const elSlow = document.getElementById("analyticsSlowSellersCount");
+  if (elSlow) elSlow.textContent = expiringCount;
+
+  const elWastage = document.getElementById("analyticsWastageRiskCount");
+  if (elWastage) elWastage.textContent = expiredCount;
+}
+
+// Interactive redirection for Efficiency & Spoilage Metrics tiles
+function filterByEfficiencyMetric(type) {
+  SoundFX.beep(600, 0.08);
+
+  if (type === "wastage") {
+    // Jump directly to Expiry Health showing all Expired / At-Risk products
+    switchView("viewExpiry", "expired");
+    showToast("Wastage Risks: Showing expired products requiring immediate clearance markdown or disposal.");
+  } else if (type === "slow") {
+    // Jump to Expiry Health showing near-expiry items (< 4 days) needing promotional clearance
+    switchView("viewExpiry", "expiring");
+    showToast("Slow Sellers: Showing items nearing expiry that require promotional placement or discounts.");
+  } else if (type === "movers") {
+    // Jump to Expiry Health showing fresh, fast-moving items under FIFO
+    switchView("viewExpiry", "fresh");
+    showToast("Top Movers: Showing fresh items rotating smoothly through FIFO inventory.");
+  } else if (type === "reminders") {
+    // Jump to Expiry Health showing all active automated reminders
+    switchView("viewExpiry", "expiring");
+    showToast("Reminders Sent: Showing items with automated alerts within the 4-day window.");
+  }
 }
 
 function updateSalesNumbers(period) {

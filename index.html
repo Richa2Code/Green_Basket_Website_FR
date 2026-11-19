@@ -250,7 +250,8 @@
       <!-- Sidebar Footer with Profile & Logout Button -->
       <div class="sidebar-footer">
         <div class="sidebar-store-card">
-          <button type="button" class="sidebar-profile-trigger" id="btnSidebarProfileCard" onclick="switchView('viewSettings')" title="View Store Profile & Settings">
+          <button type="button" class="sidebar-profile-trigger" id="btnSidebarProfileCard"
+            onclick="switchView('viewSettings')" title="View Store Profile & Settings">
             <div class="sidebar-store-avatar">GB</div>
             <div class="sidebar-store-meta">
               <h4>Green Basket</h4>
@@ -323,7 +324,8 @@
           </button>
 
           <!-- Store Manager Profile Pill in Header -->
-          <button type="button" class="header-profile-pill" id="btnHeaderProfile" onclick="switchView('viewSettings')" title="View Store Profile & Settings">
+          <button type="button" class="header-profile-pill" id="btnHeaderProfile" onclick="switchView('viewSettings')"
+            title="View Store Profile & Settings">
             <div class="header-profile-avatar">GB</div>
             <span class="header-profile-name">Manager</span>
           </button>
@@ -656,7 +658,9 @@
                 <!-- Protocol Warning Note for file:// -->
                 <div id="cameraProtocolNote"
                   style="display:none; position:absolute; top:46px; left:12px; right:12px; background:rgba(15,23,42,0.92); border:1px solid #F59E0B; padding:8px 12px; border-radius:6px; font-size:11px; color:#FEF3C7; text-align:center; z-index:15; line-height:1.4;">
-                  ⚠️ <strong>Camera Streaming Note:</strong> Live video streaming requires HTTPS or localhost. On phones, tap <strong>📸 Snap Photo</strong> (opens your phone's back camera directly) or <strong>📁 Upload Photo</strong> to decode barcodes instantly!
+                  ⚠️ <strong>Camera Streaming Note:</strong> Live video streaming requires HTTPS or localhost. On
+                  phones, tap <strong>📸 Snap Photo</strong> (opens your phone's back camera directly) or <strong>📁
+                    Upload Photo</strong> to decode barcodes instantly!
                 </div>
 
                 <div class="scanner-reticle-desktop" id="scannerReticle">
@@ -674,7 +678,8 @@
                   </button>
 
                   <!-- Phone Back Camera Direct Snap (Native Mobile Rear Camera) -->
-                  <input type="file" id="barcodeCameraCapture" accept="image/*" capture="environment" style="display:none;">
+                  <input type="file" id="barcodeCameraCapture" accept="image/*" capture="environment"
+                    style="display:none;">
                   <button type="button" class="btn-secondary-action"
                     style="padding:6px 12px; font-size:11.5px; background:rgba(0,0,0,0.75); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
                     id="btnTriggerCameraCapture" title="Snap high-res photo using phone back camera">
@@ -1006,20 +1011,27 @@
         <section class="page-view-section" id="viewSettings">
 
           <!-- STORE & MANAGER PROFILE HERO CARD -->
-          <div class="panel-card" style="max-width:800px; margin-bottom:20px; background:linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(56, 189, 248, 0.06) 100%); border-left:4px solid var(--primary);">
+          <div class="panel-card"
+            style="max-width:800px; margin-bottom:20px; background:linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(56, 189, 248, 0.06) 100%); border-left:4px solid var(--primary);">
             <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
               <div style="display:flex; align-items:center; gap:16px;">
-                <div style="width:60px; height:60px; border-radius:50%; background:#0F172A; color:#38BDF8; font-weight:800; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(15, 23, 42, 0.25); border:2.5px solid var(--primary); position:relative; flex-shrink:0;">
+                <div
+                  style="width:60px; height:60px; border-radius:50%; background:#0F172A; color:#38BDF8; font-weight:800; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(15, 23, 42, 0.25); border:2.5px solid var(--primary); position:relative; flex-shrink:0;">
                   GB
-                  <span style="position:absolute; bottom:1px; right:1px; width:14px; height:14px; background:#10B981; border:2.5px solid #FFFFFF; border-radius:50%;" title="Online & Active Store Manager"></span>
+                  <span
+                    style="position:absolute; bottom:1px; right:1px; width:14px; height:14px; background:#10B981; border:2.5px solid #FFFFFF; border-radius:50%;"
+                    title="Online & Active Store Manager"></span>
                 </div>
                 <div>
                   <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                    <h3 style="margin:0; font-size:18px; font-weight:800; color:var(--text-main);" id="profileDisplayStoreName">Green Basket Supermarket</h3>
-                    <span class="status-badge-table fresh" style="font-size:11px; font-weight:700;">Verified Store</span>
+                    <h3 style="margin:0; font-size:18px; font-weight:800; color:var(--text-main);"
+                      id="profileDisplayStoreName">Green Basket Supermarket</h3>
+                    <span class="status-badge-table fresh" style="font-size:11px; font-weight:700;">Verified
+                      Store</span>
                   </div>
                   <p style="margin:3px 0 0; font-size:13px; color:var(--text-muted);">
-                    Store Manager &bull; <strong style="color:var(--text-main);" id="profileDisplayTeam">Team SHE Innovates</strong> (CP2 Batch C)
+                    Store Manager &bull; <strong style="color:var(--text-main);" id="profileDisplayTeam">Team SHE
+                      Innovates</strong> (CP2 Batch C)
                   </p>
                   <p style="margin:2px 0 0; font-size:12px; color:var(--text-muted);">
                     Course: Product Ideation (102003408) &bull; GCET, CVM University
@@ -1028,7 +1040,8 @@
               </div>
 
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button type="button" class="btn-secondary-action" onclick="switchView('viewDashboard')" style="font-size:12px; padding:6px 12px;">
+                <button type="button" class="btn-secondary-action" onclick="switchView('viewDashboard')"
+                  style="font-size:12px; padding:6px 12px;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="7" height="9" />
                     <rect x="14" y="3" width="7" height="5" />
@@ -1037,7 +1050,8 @@
                   </svg>
                   <span>Dashboard</span>
                 </button>
-                <button type="button" class="btn-secondary-action" id="btnSettingsProfileLogout" style="font-size:12px; padding:6px 12px; color:var(--status-expired); border-color:var(--status-expired-border);">
+                <button type="button" class="btn-secondary-action" id="btnSettingsProfileLogout"
+                  style="font-size:12px; padding:6px 12px; color:var(--status-expired); border-color:var(--status-expired-border);">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                     <polyline points="16 17 21 12 16 7" />
@@ -1049,22 +1063,35 @@
             </div>
 
             <!-- Profile Highlights Meta -->
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-top:16px; padding-top:14px; border-top:1px solid rgba(0,0,0,0.06);">
-              <div style="background:var(--bg-surface); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
-                <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Account Role</div>
-                <div style="font-size:13px; font-weight:700; color:var(--text-main); margin-top:2px;">Store Administrator</div>
+            <div
+              style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-top:16px; padding-top:14px; border-top:1px solid rgba(0,0,0,0.06);">
+              <div
+                style="background:var(--bg-surface); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+                <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Account
+                  Role</div>
+                <div style="font-size:13px; font-weight:700; color:var(--text-main); margin-top:2px;">Store
+                  Administrator</div>
               </div>
-              <div style="background:var(--bg-surface); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
-                <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Inventory Rule</div>
-                <div style="font-size:13px; font-weight:700; color:var(--primary); margin-top:2px;">FIFO (First-In, First-Out)</div>
+              <div
+                style="background:var(--bg-surface); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+                <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">
+                  Inventory Rule</div>
+                <div style="font-size:13px; font-weight:700; color:var(--primary); margin-top:2px;">FIFO (First-In,
+                  First-Out)</div>
               </div>
-              <div style="background:var(--bg-surface); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
-                <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Donation Network</div>
-                <div style="font-size:13px; font-weight:700; color:var(--text-main); margin-top:2px;">Active (NGO Connected)</div>
+              <div
+                style="background:var(--bg-surface); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+                <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">
+                  Donation Network</div>
+                <div style="font-size:13px; font-weight:700; color:var(--text-main); margin-top:2px;">Active (NGO
+                  Connected)</div>
               </div>
-              <div style="background:var(--bg-surface); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
-                <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Database Engine</div>
-                <div style="font-size:13px; font-weight:700; color:var(--status-fresh); margin-top:2px;">Local Offline-First (100%)</div>
+              <div
+                style="background:var(--bg-surface); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+                <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700;">
+                  Database Engine</div>
+                <div style="font-size:13px; font-weight:700; color:var(--status-fresh); margin-top:2px;">Local
+                  Offline-First (100%)</div>
               </div>
             </div>
           </div>
@@ -1077,30 +1104,38 @@
             </div>
 
             <div style="display:flex; flex-direction:column; gap:20px;">
-              
+
               <!-- Profile Fields -->
               <div class="form-field-group">
-                <label class="form-field-label" style="font-size:13.5px; font-weight:700;">Store Profile Information</label>
+                <label class="form-field-label" style="font-size:13.5px; font-weight:700;">Store Profile
+                  Information</label>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;">
                   <div>
-                    <label style="font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:4px;">Store Name</label>
+                    <label style="font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:4px;">Store
+                      Name</label>
                     <input type="text" class="form-field-input" id="settingStoreName" value="Green Basket Supermarket">
                   </div>
                   <div>
-                    <label style="font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:4px;">Campus / Branch Location</label>
-                    <input type="text" class="form-field-input" id="settingStoreLocation" value="CP2 - Anand Campus, Gujarat">
+                    <label style="font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:4px;">Campus /
+                      Branch Location</label>
+                    <input type="text" class="form-field-input" id="settingStoreLocation"
+                      value="CP2 - Anand Campus, Gujarat">
                   </div>
                   <div>
-                    <label style="font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:4px;">Project Team</label>
-                    <input type="text" class="form-field-input" id="settingStoreTeam" value="Team SHE Innovates (Prakruti, Priya, Pushti, Richa, Richi)">
+                    <label style="font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:4px;">Project
+                      Team</label>
+                    <input type="text" class="form-field-input" id="settingStoreTeam"
+                      value="Team SHE Innovates (Prakruti, Priya, Pushti, Richa, Richi)">
                   </div>
                   <div>
-                    <label style="font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:4px;">Manager Contact Email</label>
+                    <label style="font-size:11.5px; color:var(--text-muted); display:block; margin-bottom:4px;">Manager
+                      Contact Email</label>
                     <input type="email" class="form-field-input" id="settingStoreEmail" value="manager@greenbasket.com">
                   </div>
                 </div>
                 <div style="margin-top:12px; display:flex; justify-content:flex-end;">
-                  <button type="button" class="btn-primary-action" id="btnSaveStoreProfile" style="padding:8px 18px; font-size:13px;">
+                  <button type="button" class="btn-primary-action" id="btnSaveStoreProfile"
+                    style="padding:8px 18px; font-size:13px;">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                       <polyline points="17 21 17 13 7 13 7 21" />
@@ -1113,23 +1148,27 @@
 
               <!-- Expiry Alert Thresholds -->
               <div class="form-field-group" style="padding-top:16px; border-top:1px solid var(--border-light);">
-                <label class="form-field-label" style="font-size:13.5px; font-weight:700;">Expiry Notification Window</label>
+                <label class="form-field-label" style="font-size:13.5px; font-weight:700;">Expiry Notification
+                  Window</label>
                 <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">
                   Receive alerts when food items are within this number of days before expiry:
                 </p>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                   <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(1)">1 Day</button>
                   <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(2)">2 Days</button>
-                  <button type="button" class="filter-btn-pill active" onclick="setSettingThreshold(4)">4 Days (Recommended)</button>
+                  <button type="button" class="filter-btn-pill active" onclick="setSettingThreshold(4)">4 Days
+                    (Recommended)</button>
                   <button type="button" class="filter-btn-pill" onclick="setSettingThreshold(7)">7 Days</button>
                 </div>
               </div>
 
               <!-- Export Data Utility -->
-              <div style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div
+                style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                   <h4 style="font-size:13.5px; font-weight:700;">Data Export (CSV)</h4>
-                  <p style="font-size:11.5px; color:var(--text-muted);">Download full store inventory, prices, barcodes, and expiry records</p>
+                  <p style="font-size:11.5px; color:var(--text-muted);">Download full store inventory, prices, barcodes,
+                    and expiry records</p>
                 </div>
                 <button type="button" class="btn-secondary-action" onclick="exportInventoryData()">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1142,10 +1181,12 @@
               </div>
 
               <!-- Session & Logout -->
-              <div style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div
+                style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                   <h4 style="font-size:13.5px; font-weight:700;">Account Session</h4>
-                  <p style="font-size:11.5px; color:var(--text-muted);">Currently signed in as Green Basket Supermarket Manager</p>
+                  <p style="font-size:11.5px; color:var(--text-muted);">Currently signed in as Green Basket Supermarket
+                    Manager</p>
                 </div>
                 <button type="button" class="btn-secondary-action" id="btnSettingsLogout"
                   style="color:var(--status-expired); border-color:var(--status-expired-border);">
@@ -1159,12 +1200,15 @@
               </div>
 
               <!-- Reset Sample Data -->
-              <div style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div
+                style="padding-top:16px; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                   <h4 style="font-size:13.5px; font-weight:700;">Reset to Default Sample Data</h4>
-                  <p style="font-size:11.5px; color:var(--text-muted);">Restore original Product Ideation sample items</p>
+                  <p style="font-size:11.5px; color:var(--text-muted);">Restore original Product Ideation sample items
+                  </p>
                 </div>
-                <button type="button" class="btn-secondary-action" onclick="resetSampleData()">Reset Sample Data</button>
+                <button type="button" class="btn-secondary-action" onclick="resetSampleData()">Reset Sample
+                  Data</button>
               </div>
             </div>
           </div>

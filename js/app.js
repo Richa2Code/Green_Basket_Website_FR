@@ -442,8 +442,8 @@ function setupGlobalControls() {
   document.getElementById("btnConfirmDeskDiscount")?.addEventListener("click", confirmDiscount);
   document.getElementById("btnConfirmDeskDonation")?.addEventListener("click", confirmDonation);
 
-  // Webcam button
-  document.getElementById("btnToggleDesktopCamera")?.addEventListener("click", toggleWebcam);
+  // Phone Rear Camera / Webcam button
+  document.getElementById("btnToggleDesktopCamera")?.addEventListener("click", toggleRearCamera);
 }
 
 // ==========================================================================
@@ -804,6 +804,12 @@ function setupIntakeForm() {
     }
   });
 
+  // Mobile Back Camera Direct Snap trigger
+  document.getElementById("btnTriggerCameraCapture")?.addEventListener("click", () => {
+    document.getElementById("barcodeCameraCapture")?.click();
+  });
+  document.getElementById("barcodeCameraCapture")?.addEventListener("change", handleBarcodeImageUpload);
+
   // Photo upload trigger
   document.getElementById("btnTriggerUpload")?.addEventListener("click", () => {
     document.getElementById("barcodeImageUpload")?.click();
@@ -1018,7 +1024,157 @@ function triggerQuickSampleScan() {
   handleScannedBarcode(key);
 }
 
-// Handle Barcode Image File Upload (Real detection - no fake random mock fallback)
+// ==========================================================================
+// Enhanced Barcode Decoding Pipeline (Native BarcodeDetector + ZXing Engine)
+// Supports multi-angle orientation, phone camera resolution scaling & binarization
+// ==========================================================================
+async function decodeBarcodeFromImageFile(file) {
+  // Step 1: Read file as data URL and load into an HTMLImageElement
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+  const img = new Image();
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+
+  // Step 2: Try native browser BarcodeDetector directly
+  if ('BarcodeDetector' in window) {
+    try {
+      const formats = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'];
+      const detector = new BarcodeDetector({ formats });
+      const barcodes = await detector.detect(img);
+      if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+        return barcodes[0].rawValue.trim();
+      }
+    } catch (e) {
+      console.log("Direct native BarcodeDetector pass completed without match, trying ZXing...", e);
+    }
+  }
+
+  // Step 3: Try ZXing BrowserMultiFormatReader directly on the image element
+  if (window.ZXing) {
+    try {
+      const hints = new Map();
+      hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+      hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
+        ZXing.BarcodeFormat.EAN_13,
+        ZXing.BarcodeFormat.EAN_8,
+        ZXing.BarcodeFormat.UPC_A,
+        ZXing.BarcodeFormat.UPC_E,
+        ZXing.BarcodeFormat.CODE_128,
+        ZXing.BarcodeFormat.CODE_39,
+        ZXing.BarcodeFormat.ITF,
+        ZXing.BarcodeFormat.QR_CODE
+      ]);
+      const reader = new ZXing.BrowserMultiFormatReader(hints);
+      const result = await reader.decodeFromImageElement(img);
+      if (result && result.getText()) {
+        return result.getText().trim();
+      }
+    } catch (zxErr) {
+      console.log("Direct ZXing image pass completed without match, trying canvas rotations...", zxErr);
+    }
+  }
+
+  // Step 4: Multi-Scale & Multi-Angle Canvas Rotation (0°, 90°, 180°, 270°)
+  // Downscale large smartphone photos (e.g. 4000x3000px down to max 1400px)
+  const maxDim = 1400;
+  let targetWidth = img.naturalWidth || img.width;
+  let targetHeight = img.naturalHeight || img.height;
+  if (targetWidth > maxDim || targetHeight > maxDim) {
+    if (targetWidth > targetHeight) {
+      targetHeight = Math.round((targetHeight * maxDim) / targetWidth);
+      targetWidth = maxDim;
+    } else {
+      targetWidth = Math.round((targetWidth * maxDim) / targetHeight);
+      targetHeight = maxDim;
+    }
+  }
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+  const angles = [0, 90, 180, 270];
+  for (const angle of angles) {
+    if (angle === 90 || angle === 270) {
+      canvas.width = targetHeight;
+      canvas.height = targetWidth;
+    } else {
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+    }
+
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate((angle * Math.PI) / 180);
+    ctx.drawImage(img, -targetWidth / 2, -targetHeight / 2, targetWidth, targetHeight);
+    ctx.restore();
+
+    // Check with native BarcodeDetector on rotated canvas
+    if ('BarcodeDetector' in window) {
+      try {
+        const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'] });
+        const barcodes = await detector.detect(canvas);
+        if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+          return barcodes[0].rawValue.trim();
+        }
+      } catch (e) { }
+    }
+
+    // Check with ZXing on rotated canvas
+    if (window.ZXing) {
+      try {
+        const hints = new Map();
+        hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+        const reader = new ZXing.BrowserMultiFormatReader(hints);
+        const rotatedDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        const result = await reader.decodeFromImageUrl(rotatedDataUrl);
+        if (result && result.getText()) {
+          return result.getText().trim();
+        }
+      } catch (e) { }
+    }
+  }
+
+  // Step 5: High-contrast binarization pass (for low light / glare photos)
+  try {
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+    const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const avg = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+      const v = avg > 128 ? 255 : 0;
+      data[i] = v;
+      data[i + 1] = v;
+      data[i + 2] = v;
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    if (window.ZXing) {
+      const hints = new Map();
+      hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+      const reader = new ZXing.BrowserMultiFormatReader(hints);
+      const binarizedDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+      const result = await reader.decodeFromImageUrl(binarizedDataUrl);
+      if (result && result.getText()) {
+        return result.getText().trim();
+      }
+    }
+  } catch (e) { }
+
+  return null;
+}
+
+// Handle Barcode Image File Upload (From Photo Gallery or Camera Snap)
 async function handleBarcodeImageUpload(event) {
   const file = event.target.files?.[0];
   if (!file) return;
@@ -1029,42 +1185,36 @@ async function handleBarcodeImageUpload(event) {
     badge.style.color = "#F59E0B";
   }
 
-  // Attempt detection via browser BarcodeDetector if available
-  if ('BarcodeDetector' in window) {
-    try {
-      const formats = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'];
-      const detector = new BarcodeDetector({ formats });
+  showToast("Analyzing photo with multi-angle barcode reader...");
 
-      let barcodes = [];
+  try {
+    const rawBarcode = await decodeBarcodeFromImageFile(file);
 
-      // Try with ImageBitmap first (cleanest bitmap rendering)
-      try {
-        const bitmap = await createImageBitmap(file);
-        barcodes = await detector.detect(bitmap);
-      } catch (bitmapErr) {
-        // Fallback to HTMLImageElement
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        await img.decode();
-        barcodes = await detector.detect(img);
+    if (rawBarcode) {
+      event.target.value = "";
+      handleScannedBarcode(rawBarcode);
+
+      // Visual highlight on barcode input field so user clearly sees the captured digits!
+      const barcodeField = document.getElementById("intakeBarcode");
+      if (barcodeField) {
+        barcodeField.classList.add("barcode-highlight-pulse");
+        setTimeout(() => barcodeField.classList.remove("barcode-highlight-pulse"), 2000);
       }
 
-      if (barcodes && barcodes.length > 0) {
-        const rawCode = barcodes[0].rawValue;
-        if (rawCode) {
-          handleScannedBarcode(rawCode);
-          event.target.value = "";
-          return;
-        }
+      if (badge) {
+        badge.innerHTML = `✅ Barcode Captured: <strong>${rawBarcode}</strong>`;
+        badge.style.color = "var(--primary)";
+        badge.style.borderColor = "var(--primary)";
       }
-    } catch (e) {
-      console.warn("BarcodeDetector error on uploaded image:", e);
+      return;
     }
+  } catch (err) {
+    console.error("Barcode photo decode error:", err);
   }
 
-  // If the browser detector cannot decode the image, report honestly:
+  // If no barcode was detected
   event.target.value = "";
-  SoundFX.beep(250, 0.2, "sawtooth");
+  SoundFX.beep(250, 0.25, "sawtooth");
 
   if (badge) {
     badge.innerHTML = "❌ Could not decode barcode from photo";
@@ -1075,52 +1225,105 @@ async function handleBarcodeImageUpload(event) {
     }, 4500);
   }
 
-  showToast("Could not detect a clear barcode in this photo. Please use a clearer photo, or type the barcode numbers directly.");
+  showToast("Could not read a clear barcode from this photo. Please hold the camera steady, ensure good lighting, or enter the numbers manually.");
 }
 
-// Native Video Frame Detection Loop (Chrome/Edge BarcodeDetector API)
+// Continuous Video Frame Barcode Detection Loop (Native BarcodeDetector + ZXing Fallback)
+let zxingLiveReader = null;
+
 async function startBarcodeDetection(video) {
-  if (!('BarcodeDetector' in window)) return;
+  barcodeDetectorActive = true;
 
-  try {
-    const supported = await BarcodeDetector.getSupportedFormats();
-    const formats = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'].filter(f => supported.includes(f));
-    if (formats.length === 0) return;
+  // Initialize native BarcodeDetector if available
+  let nativeDetector = null;
+  if ('BarcodeDetector' in window) {
+    try {
+      const supported = await BarcodeDetector.getSupportedFormats();
+      const formats = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'].filter(f => supported.includes(f));
+      if (formats.length > 0) {
+        nativeDetector = new BarcodeDetector({ formats });
+      }
+    } catch (err) {
+      console.warn("BarcodeDetector setup failed:", err);
+    }
+  }
 
-    const detector = new BarcodeDetector({ formats });
-    barcodeDetectorActive = true;
+  // Initialize ZXing live reader
+  if (window.ZXing) {
+    try {
+      const hints = new Map();
+      hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+      hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
+        ZXing.BarcodeFormat.EAN_13,
+        ZXing.BarcodeFormat.EAN_8,
+        ZXing.BarcodeFormat.UPC_A,
+        ZXing.BarcodeFormat.UPC_E,
+        ZXing.BarcodeFormat.CODE_128,
+        ZXing.BarcodeFormat.CODE_39,
+        ZXing.BarcodeFormat.ITF,
+        ZXing.BarcodeFormat.QR_CODE
+      ]);
+      zxingLiveReader = new ZXing.BrowserMultiFormatReader(hints);
+    } catch (e) {
+      console.warn("ZXing live reader error:", e);
+    }
+  }
 
-    const scanFrame = async () => {
-      if (!AppState.webcamStream || !barcodeDetectorActive) return;
+  const captureCanvas = document.createElement("canvas");
+  const captureCtx = captureCanvas.getContext("2d", { willReadFrequently: true });
+  let isProcessingFrame = false;
 
+  const scanFrame = async () => {
+    if (!AppState.webcamStream || !barcodeDetectorActive) return;
+
+    if (!isProcessingFrame && video.readyState >= 2) {
+      isProcessingFrame = true;
       try {
-        if (video.readyState >= 2) {
-          const results = await detector.detect(video);
-          if (results && results.length > 0) {
-            const rawVal = results[0].rawValue;
-            if (rawVal) {
-              handleScannedBarcode(rawVal);
-              // Pause 1.5s to prevent duplicate rapid trigger
-              setTimeout(() => {
-                if (AppState.webcamStream && barcodeDetectorActive) {
-                  requestAnimationFrame(scanFrame);
-                }
-              }, 1500);
-              return;
-            }
+        let detectedCode = null;
+
+        // Try native detector first
+        if (nativeDetector) {
+          const results = await nativeDetector.detect(video);
+          if (results && results.length > 0 && results[0].rawValue) {
+            detectedCode = results[0].rawValue.trim();
           }
         }
+
+        // Try ZXing frame extraction if native detector gave no result
+        if (!detectedCode && window.ZXing && zxingLiveReader) {
+          captureCanvas.width = video.videoWidth || 640;
+          captureCanvas.height = video.videoHeight || 480;
+          captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+          try {
+            const zxResult = await zxingLiveReader.decodeFromImageUrl(captureCanvas.toDataURL("image/jpeg", 0.8));
+            if (zxResult && zxResult.getText()) {
+              detectedCode = zxResult.getText().trim();
+            }
+          } catch (zxErr) {
+            // No barcode in this frame, expected behavior
+          }
+        }
+
+        if (detectedCode) {
+          handleScannedBarcode(detectedCode);
+          setTimeout(() => {
+            isProcessingFrame = false;
+            if (AppState.webcamStream && barcodeDetectorActive) {
+              requestAnimationFrame(scanFrame);
+            }
+          }, 2000);
+          return;
+        }
       } catch (err) { }
+      isProcessingFrame = false;
+    }
 
-      if (AppState.webcamStream && barcodeDetectorActive) {
-        requestAnimationFrame(scanFrame);
-      }
-    };
+    if (AppState.webcamStream && barcodeDetectorActive) {
+      requestAnimationFrame(scanFrame);
+    }
+  };
 
-    requestAnimationFrame(scanFrame);
-  } catch (err) {
-    console.warn("BarcodeDetector setup error:", err);
-  }
+  requestAnimationFrame(scanFrame);
 }
 
 function resetIntakeForm() {
@@ -1134,7 +1337,67 @@ function resetIntakeForm() {
   if (statusEl) statusEl.textContent = "";
 }
 
-async function toggleWebcam() {
+// Request Phone Rear / Backside Camera with Multi-Tier Fallback
+async function getRearCameraStream() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    throw new Error("getUserMedia not supported in this browser");
+  }
+
+  // Tier 1: Exact environment facingMode (forces phone back camera)
+  try {
+    return await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { exact: "environment" },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    });
+  } catch (err1) {
+    console.log("Exact environment constraint unavailable, trying device search...", err1);
+  }
+
+  // Tier 2: Search enumerated device list for rear/back camera
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoInputs = devices.filter(d => d.kind === "videoinput");
+    const rearDevice = videoInputs.find(d => {
+      const label = (d.label || "").toLowerCase();
+      return label.includes("back") || label.includes("rear") || label.includes("environment") || label.includes("facing back");
+    });
+    if (rearDevice && rearDevice.deviceId) {
+      return await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: { exact: rearDevice.deviceId },
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      });
+    }
+  } catch (err2) {
+    console.log("enumerateDevices rear search unavailable...", err2);
+  }
+
+  // Tier 3: Ideal environment facingMode (works on standard mobile browsers)
+  try {
+    return await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: "environment" },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    });
+  } catch (err3) {
+    console.log("Ideal environment constraint unavailable, falling back...", err3);
+  }
+
+  // Tier 4: Generic video (works on laptops & desktop webcams)
+  return await navigator.mediaDevices.getUserMedia({
+    video: { width: { ideal: 1280 }, height: { ideal: 720 } }
+  });
+}
+
+// Toggle Phone Rear Camera Video Streaming
+async function toggleRearCamera() {
   const video = document.getElementById("desktopWebcamVideo");
   const simBg = document.getElementById("desktopSimBg");
   const btn = document.getElementById("btnToggleDesktopCamera");
@@ -1145,24 +1408,15 @@ async function toggleWebcam() {
     stopWebcamStream();
     if (video) video.style.display = "none";
     if (simBg) simBg.style.display = "block";
-    if (btn) btn.textContent = "📷 Start Webcam";
+    if (btn) btn.textContent = "📷 Live Rear Camera";
     if (note) note.style.display = "none";
     if (badge) {
       badge.innerHTML = "🎯 Align barcode inside reticle";
       badge.style.color = "#38BDF8";
     }
   } else {
-    // Check if browser allows mediaDevices
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      if (note) note.style.display = "block";
-      showToast("Webcam requires localhost or HTTPS. Use 1-Click Presets or Upload Photo.");
-      return;
-    }
-
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
-      });
+      const stream = await getRearCameraStream();
       AppState.webcamStream = stream;
       if (video) {
         video.srcObject = stream;
@@ -1170,19 +1424,20 @@ async function toggleWebcam() {
         await video.play();
       }
       if (simBg) simBg.style.display = "none";
-      if (btn) btn.textContent = "⏹ Stop Webcam";
+      if (btn) btn.textContent = "⏹ Stop Camera";
       if (note) note.style.display = "none";
       if (badge) {
-        badge.innerHTML = "🟢 Camera active: Hold barcode to lens";
+        badge.innerHTML = "🟢 Back Camera Active: Hold barcode in focus";
         badge.style.color = "#10B981";
       }
       SoundFX.beep(1000, 0.1);
 
-      // Start continuous barcode reading loop
+      // Start continuous barcode scanning
       startBarcodeDetection(video);
     } catch (e) {
+      console.warn("Camera start error:", e);
       if (note) note.style.display = "block";
-      showToast("Camera access restricted. Use 1-Click test presets or Upload Photo.");
+      showToast("Camera access restricted. On phones, use 📸 Snap Photo to capture with back camera!");
     }
   }
 }

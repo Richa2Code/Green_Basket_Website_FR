@@ -1304,6 +1304,18 @@ html, body {
   100% { top: 8%; opacity: 0.6; }
 }
 
+@keyframes barcodePulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); border-color: #10B981; }
+  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); border-color: #10B981; }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.barcode-highlight-pulse {
+  animation: barcodePulse 1.2s ease-out;
+  border-color: #10B981 !important;
+  background-color: rgba(16, 185, 129, 0.08) !important;
+}
+
 .intake-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -656,10 +656,7 @@
                 <!-- Protocol Warning Note for file:// -->
                 <div id="cameraProtocolNote"
                   style="display:none; position:absolute; top:46px; left:12px; right:12px; background:rgba(15,23,42,0.92); border:1px solid #F59E0B; padding:8px 12px; border-radius:6px; font-size:11px; color:#FEF3C7; text-align:center; z-index:15; line-height:1.4;">
-                  ⚠️ <strong>Browser Security Note:</strong> Direct physical camera streaming requires
-                  <code>localhost</code> (e.g. <code>python -m http.server 8080</code>). When opening via local
-                  <code>file:///</code>, use <strong>Upload Barcode Photo</strong> or the <strong>1-Click
-                    Presets</strong> below!
+                  ⚠️ <strong>Camera Streaming Note:</strong> Live video streaming requires HTTPS or localhost. On phones, tap <strong>📸 Snap Photo</strong> (opens your phone's back camera directly) or <strong>📁 Upload Photo</strong> to decode barcodes instantly!
                 </div>
 
                 <div class="scanner-reticle-desktop" id="scannerReticle">
@@ -669,20 +666,33 @@
                 <!-- Scanner Controls Bottom Strip -->
                 <div
                   style="position:absolute; bottom:12px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding:0 8px; z-index:20;">
+                  <!-- Live Back Camera Toggle -->
                   <button type="button" class="btn-secondary-action"
                     style="padding:6px 12px; font-size:11.5px; background:rgba(0,0,0,0.75); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
-                    id="btnToggleDesktopCamera">
-                    📷 Start Webcam
+                    id="btnToggleDesktopCamera" title="Start live phone rear camera">
+                    📷 Live Rear Camera
                   </button>
+
+                  <!-- Phone Back Camera Direct Snap (Native Mobile Rear Camera) -->
+                  <input type="file" id="barcodeCameraCapture" accept="image/*" capture="environment" style="display:none;">
+                  <button type="button" class="btn-secondary-action"
+                    style="padding:6px 12px; font-size:11.5px; background:rgba(0,0,0,0.75); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
+                    id="btnTriggerCameraCapture" title="Snap high-res photo using phone back camera">
+                    📸 Snap Photo
+                  </button>
+
+                  <!-- Photo Upload from Device Storage / Gallery -->
                   <input type="file" id="barcodeImageUpload" accept="image/*" style="display:none;">
                   <button type="button" class="btn-secondary-action"
                     style="padding:6px 12px; font-size:11.5px; background:rgba(0,0,0,0.75); color:#FFFFFF; border-color:rgba(255,255,255,0.3);"
-                    id="btnTriggerUpload">
+                    id="btnTriggerUpload" title="Upload barcode photo from device storage">
                     📁 Upload Photo
                   </button>
+
+                  <!-- Quick Simulation Preset -->
                   <button type="button" class="btn-secondary-action"
                     style="padding:6px 14px; font-size:11.5px; background:#10B981; color:#FFFFFF; border:none; font-weight:700;"
-                    id="btnQuickViewfinderScan">
+                    id="btnQuickViewfinderScan" title="Quick sample scan simulation">
                     ⚡ Quick Scan
                   </button>
                 </div>
@@ -1399,6 +1409,13 @@
     <button type="button" class="toast-undo-button" id="btnDesktopUndo"></button>
   </div>
 
+  <!-- Offline Barcode Decoding Engine (ZXing) with CDN Fallback -->
+  <script src="js/zxing.min.js?v=2.1"></script>
+  <script>
+    if (!window.ZXing) {
+      document.write('<script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"><\/script>');
+    }
+  </script>
   <!-- Scripts -->
   <script src="js/data.js?v=2.1"></script>
   <script src="js/app.js?v=2.1"></script>

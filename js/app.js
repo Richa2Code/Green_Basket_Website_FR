@@ -678,8 +678,14 @@ function setupIntakeForm() {
     if (match) {
       handleScannedBarcode(code);
       if (statusEl) {
-        statusEl.innerHTML = `✓ Recognized: <strong>${match.name}</strong> (₹${match.price})`;
-        statusEl.style.color = "#059669";
+        const existingInStore = AppState.inventory.find(i => (i.barcode && i.barcode === code) || (match.name && i.name.toLowerCase() === match.name.toLowerCase()));
+        if (existingInStore) {
+          statusEl.innerHTML = `✓ In Stock: <strong>${match.name}</strong> (${existingInStore.stock} ${existingInStore.unit || 'units'} currently). Submitting will restock!`;
+          statusEl.style.color = "#059669";
+        } else {
+          statusEl.innerHTML = `✓ Recognized: <strong>${match.name}</strong> (₹${match.price})`;
+          statusEl.style.color = "#059669";
+        }
       }
     } else {
       // New unprogrammed barcode!
@@ -785,26 +791,62 @@ function setupIntakeForm() {
     else if (category === "Pantry") image = "assets/rice.svg";
     else if (category === "Frozen") image = "assets/peas.svg";
 
-    const newItem = {
-      id: "prod-" + Date.now(),
-      name,
-      category,
-      barcode: barcode || "890" + Math.floor(1000000000 + Math.random() * 9000000000),
-      price,
-      stock,
-      unit: "units",
-      mfgDate: mfgDate || new Date().toISOString().split("T")[0],
-      expiryDate,
-      supplier,
-      storageLocation: location,
-      storageTips: notes || "Store under standard conditions.",
-      notes,
-      image,
-      discount: 0
-    };
+    // Check if product already exists in inventory (match by barcode or name)
+    const existingIndex = AppState.inventory.findIndex(item => {
+      if (barcode && item.barcode && item.barcode === barcode) return true;
+      if (name && item.name && item.name.toLowerCase() === name.toLowerCase()) return true;
+      return false;
+    });
 
-    AppState.inventory.unshift(newItem);
-    saveData();
+    if (existingIndex !== -1) {
+      // PRODUCT ALREADY EXISTS -> RESTOCK / UPDATE IN PLACE (NO DUPLICATE ROWS)
+      const existing = AppState.inventory[existingIndex];
+      const previousStock = Number(existing.stock) || 0;
+      existing.stock = previousStock + stock;
+      if (price > 0) existing.price = price;
+      if (expiryDate) existing.expiryDate = expiryDate;
+      if (mfgDate) existing.mfgDate = mfgDate;
+      if (location) existing.storageLocation = location;
+      if (notes) existing.storageTips = notes;
+      if (supplier) existing.supplier = supplier;
+
+      // Recalculate shelf life status with new expiry date
+      const calc = calculateDaysRemaining(existing.expiryDate);
+      existing.daysRemaining = calc.days;
+      existing.status = calc.status;
+
+      saveData();
+      SoundFX.actionSuccess();
+      showToast(`Restocked "${existing.name}": +${stock} units added. Total stock: ${existing.stock} ${existing.unit || 'units'}.`);
+    } else {
+      // BRAND NEW PRODUCT -> INSERT NEW INVENTORY ITEM
+      const newItem = {
+        id: "prod-" + Date.now(),
+        name,
+        category,
+        barcode: barcode || "890" + Math.floor(1000000000 + Math.random() * 9000000000),
+        price,
+        stock,
+        unit: "units",
+        mfgDate: mfgDate || new Date().toISOString().split("T")[0],
+        expiryDate,
+        supplier,
+        storageLocation: location,
+        storageTips: notes || "Store under standard conditions.",
+        notes,
+        image,
+        discount: 0
+      };
+
+      const calc = calculateDaysRemaining(newItem.expiryDate);
+      newItem.daysRemaining = calc.days;
+      newItem.status = calc.status;
+
+      AppState.inventory.unshift(newItem);
+      saveData();
+      SoundFX.actionSuccess();
+      showToast(`Registered new product "${name}" (${stock} units) into inventory.`);
+    }
 
     // Dynamically learn and remember this barcode permanently!
     if (barcode) {
@@ -818,8 +860,6 @@ function setupIntakeForm() {
       });
     }
 
-    SoundFX.actionSuccess();
-    showToast(`Registered "${name}" into inventory and saved barcode to store database.`);
     resetIntakeForm();
     switchView("viewPantry");
   });
